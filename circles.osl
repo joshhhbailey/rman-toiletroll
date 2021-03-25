@@ -1,0 +1,40 @@
+shader circles(
+    // Can be interpolated from an 's' or 't' variable attached to the geometry
+    float s = 0 [[int lockgeom = 0]],
+    float t = 0 [[int lockgeom = 0]],
+
+    // Circle centre
+    float s_position = 0.5,
+    float t_position = 0.5,
+
+    // Circle radius
+    float innerRadius = 0.0,
+    float outerRadius = 0.45,
+
+    // Mini circle
+    float mini_inner = 0.0,
+    float mini_outer = 0.05,
+    color mini_colour = color(0, 1, 0),
+
+    // Colours
+    color circle_colour = color(1, 0, 0),
+    color background_colour = color(1, 1, 1),
+    output color resultRGB = 0)
+{
+    // Find distance between circle centre and texture coordinate
+    float dist = distance(point(s_position, t_position, 0), point(s, t, 0));
+    if (dist <= outerRadius && dist >= innerRadius)
+    {
+        resultRGB = circle_colour;
+    }
+    else
+    {
+        resultRGB = background_colour;
+    }
+
+    dist = distance(point(0.1, 0.5, 0), point(s, t, 0));
+    if (dist <= mini_outer && dist >= mini_inner)
+    {
+        resultRGB = mini_colour;
+    }
+}

@@ -1,0 +1,55 @@
+// The following shader is adapted from:
+// Kesson, M., 2002. OSL Rosette. [online]
+// Available from: https://www.fundza.com/rfm/osl/rosette/index.html
+// Accessed [25 March 2021]
+
+shader testing(
+    // Can be interpolated from an 's' or 't' variable attached to the geometry
+    float s = 0 [[int lockgeom = 0]],
+    float t = 0 [[int lockgeom = 0]],
+
+    // Axis centre points
+    float s_centre = 0.5,
+    float t_centre = 0.5,
+    
+    // Circle properties
+    float innerRadius = 0.0,
+    float outerRadius = 0.01,
+    color circleColour = color(1.0, 0.0, 0.0),
+
+    // Row properties
+    int rows = 3,
+    point circlesPerRow = point (18, 9, 0),
+    float distanceBetweenRows = outerRadius * 5,
+
+    color bgColour = color(1.0, 1.0, 1),
+    output color resultRGB = 0)
+{
+    point centrePoint = point(s_centre, t_centre, 0);
+    point axisPoint = point(s_centre, t_centre, 1);
+    point stPoint = point(s, t, 0);
+    point rotPoint;
+    float rotS, rotT;
+    float sOffset = 1.0 - (2 * outerRadius);
+    float tOffset = t_centre;
+    
+    resultRGB = bgColour;
+    for (int i = 0; i < rows; ++i)
+    {
+        float angle = radians(360 / circlesPerRow[i]);
+        for (int j = 0; j < circlesPerRow[i]; ++j) {
+            // Rotate surface
+            rotPoint = rotate(stPoint, j * angle, centrePoint, axisPoint);
+            rotS = rotPoint[0];
+            rotT = rotPoint[1];
+
+            // Draw circle
+            float dist = distance(point(sOffset, tOffset, 0), point(rotS, rotT, 0));
+            if (dist <= outerRadius && dist >= innerRadius)
+            {
+                resultRGB = circleColour;
+            }
+        }
+        sOffset -= distanceBetweenRows;
+    }
+}

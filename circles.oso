@@ -1,0 +1,69 @@
+OpenShadingLanguage 1.00
+# Compiled by oslc 1.8.2.pixar1697a56
+# options: 
+shader circles
+param	float	s	0		%meta{int,lockgeom,0}  %read{1,12} %write{2147483647,-1}
+param	float	t	0		%meta{int,lockgeom,0}  %read{1,12} %write{2147483647,-1}
+param	float	s_position	0.5		%read{0,0} %write{2147483647,-1}
+param	float	t_position	0.5		%read{0,0} %write{2147483647,-1}
+param	float	innerRadius	0		%read{6,6} %write{2147483647,-1}
+param	float	outerRadius	0.44999999		%read{3,3} %write{2147483647,-1}
+param	float	mini_inner	0		%read{17,17} %write{2147483647,-1}
+param	float	mini_outer	0.050000001		%read{14,14} %write{2147483647,-1}
+param	color	mini_colour	0 1 0		%read{21,21} %write{2147483647,-1}
+param	color	circle_colour	1 0 0		%read{10,10} %write{2147483647,-1}
+param	color	background_colour	1 1 1		%read{11,11} %write{2147483647,-1}
+oparam	color	resultRGB	0 0 0		%read{2147483647,-1} %write{10,21}
+local	float	dist	%read{3,17} %write{2,13}
+temp	point	$tmp1	%read{2,2} %write{0,0}
+const	int	$const1	0		%read{4,18} %write{2147483647,-1}
+const	float	$const2	0		%read{0,12} %write{2147483647,-1}
+temp	point	$tmp2	%read{2,2} %write{1,1}
+temp	int	$tmp3	%read{4,4} %write{3,3}
+temp	int	$tmp4	%read{5,9} %write{4,8}
+temp	int	$tmp5	%read{7,7} %write{6,6}
+temp	int	$tmp6	%read{8,8} %write{7,7}
+const	point	$const3	0.1 0.5 0		%read{13,13} %write{2147483647,-1}
+temp	point	$tmp8	%read{13,13} %write{12,12}
+temp	int	$tmp9	%read{15,15} %write{14,14}
+temp	int	$tmp10	%read{16,20} %write{15,19}
+temp	int	$tmp11	%read{18,18} %write{17,17}
+temp	int	$tmp12	%read{19,19} %write{18,18}
+code ___main___
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\circles.osl:26
+#     if (dist <= outerRadius && dist >= innerRadius)
+	point		$tmp1 s_position t_position $const2 	%filename{"C:\\Users\\baile\\Desktop\\rman-toiletroll\\circles.osl"} %line{26} %argrw{"wrrr"}
+	point		$tmp2 s t $const2 	%argrw{"wrrr"}
+	distance	dist $tmp1 $tmp2 	%argrw{"wrr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\circles.osl:27
+#     {
+	le		$tmp3 dist outerRadius 	%line{27} %argrw{"wrr"}
+	neq		$tmp4 $tmp3 $const1 	%argrw{"wrr"}
+	if		$tmp4 9 9 	%argrw{"r"}
+	ge		$tmp5 dist innerRadius 	%argrw{"wrr"}
+	neq		$tmp6 $tmp5 $const1 	%argrw{"wrr"}
+	assign		$tmp4 $tmp6 	%argrw{"wr"}
+	if		$tmp4 11 12 	%argrw{"r"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\circles.osl:29
+#     }
+	assign		resultRGB circle_colour 	%line{29} %argrw{"wr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\circles.osl:33
+#     }
+	assign		resultRGB background_colour 	%line{33} %argrw{"wr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\circles.osl:36
+#     if (dist <= mini_outer && dist >= mini_inner)
+	point		$tmp8 s t $const2 	%line{36} %argrw{"wrrr"}
+	distance	dist $const3 $tmp8 	%argrw{"wrr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\circles.osl:37
+#     {
+	le		$tmp9 dist mini_outer 	%line{37} %argrw{"wrr"}
+	neq		$tmp10 $tmp9 $const1 	%argrw{"wrr"}
+	if		$tmp10 20 20 	%argrw{"r"}
+	ge		$tmp11 dist mini_inner 	%argrw{"wrr"}
+	neq		$tmp12 $tmp11 $const1 	%argrw{"wrr"}
+	assign		$tmp10 $tmp12 	%argrw{"wr"}
+	if		$tmp10 22 22 	%argrw{"r"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\circles.osl:39
+#     }
+	assign		resultRGB mini_colour 	%line{39} %argrw{"wr"}
+	end

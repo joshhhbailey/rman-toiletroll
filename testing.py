@@ -36,7 +36,13 @@ def CreateRoll(height = 1.0, outerRadius = 1.0, innerRadius = 0.5):
     ri.Cylinder(innerRadius, -height, height, 360)
     ri.AttributeEnd()
     # Outer tube
+    ri.AttributeBegin()
+    #ri.Pattern("circles", "circles", { })
+    #ri.Bxdf("PxrSurface", "plastic",{
+    #      "reference color diffuseColor" : ["circles:resultRGB"],
+    #})
     ri.Cylinder(outerRadius, -height, height, 360)
+    ri.AttributeEnd()
     # Top
     ri.Hyperboloid([innerRadius, 0.0, -height], [outerRadius, 0.0, -height], 360)
 
@@ -48,7 +54,7 @@ def Diffuse(r = 1.0, g = 1.0, b = 1.0):
 
 def CompileShader(shader):
     # The following function is from:
-    # Macey, J,. 2018. Lecture4Shaders. [online]
+    # Macey, J., 2018. Lecture4Shaders. [online]
     # Available from: https://github.com/NCCA/Renderman/blob/master/Lecture4Shaders/Bands/bands.py
     # Accessed [25 March 2021]
   	if os.path.isfile(shader + ".oso") != True or os.stat(shader + ".osl").st_mtime - os.stat(shader + ".oso").st_mtime > 0:
@@ -59,7 +65,7 @@ def CompileShader(shader):
 		    sys.exit('shader compilation failed')
 
 if __name__ == "__main__":
-    CompileShader("circles")
+    CompileShader("testing")
     ri = prman.Ri()     # Create RenderMan interface instance
 
     ri.Begin("__render")    # Begin .rib and pass to renderer
@@ -68,8 +74,8 @@ if __name__ == "__main__":
 
     # Camera coordinate system
     ri.Projection(ri.PERSPECTIVE)
-    ri.Translate(0, 0, 5)
-    ri.Rotate(50, 1, 0, 0)
+    ri.Translate(0, 0, 2)
+    #ri.Rotate(50, 1, 0, 0)
 
     # World coordinate system
     ri.WorldBegin()
@@ -82,7 +88,7 @@ if __name__ == "__main__":
     roll_height = 1.06
     roll_outerRadius = 1.04
     roll_innerRadius = 0.49
-    CreateRoll(roll_height, roll_outerRadius, roll_innerRadius)
+    #CreateRoll(roll_height, roll_outerRadius, roll_innerRadius)
     ri.AttributeEnd()
     ri.TransformEnd()
 
@@ -90,7 +96,16 @@ if __name__ == "__main__":
     ri.TransformBegin()
     ri.AttributeBegin()
     ri.Attribute ("identifier", {"name": "Surface"})
-    Diffuse(0.95, 0.8, 0.43)
+
+    # Small = 18, 9, 0
+    # Medium = 32, 22, 14
+    # Large = 50, 44, 36
+
+    ri.Pattern("testing", "testing", { "point circlesPerRow" : [50, 44, 36] })
+    ri.Bxdf("PxrSurface", "plastic",{
+          "reference color diffuseColor" : ["testing:resultRGB"],
+    })
+    #Diffuse(0.95, 0.8, 0.43)
     cube_width = 5
     cube_height = 5
     cube_depth = 0.5
