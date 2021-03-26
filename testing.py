@@ -37,10 +37,10 @@ def CreateRoll(height = 1.0, outerRadius = 1.0, innerRadius = 0.5):
     ri.AttributeEnd()
     # Outer tube
     ri.AttributeBegin()
-    #ri.Pattern("circles", "circles", { })
-    #ri.Bxdf("PxrSurface", "plastic",{
-    #      "reference color diffuseColor" : ["circles:resultRGB"],
-    #})
+    ri.Pattern("testing", "testing", { "point circlesPerRing" : [50, 44, 36] })
+    ri.Bxdf("PxrSurface", "plastic",{
+          "reference color diffuseColor" : ["testing:resultRGB"],
+    })
     ri.Cylinder(outerRadius, -height, height, 360)
     ri.AttributeEnd()
     # Top
@@ -49,7 +49,7 @@ def CreateRoll(height = 1.0, outerRadius = 1.0, innerRadius = 0.5):
 def Diffuse(r = 1.0, g = 1.0, b = 1.0):
     ri.Bxdf( 'PxrDiffuse','diffuse', 
     {
-    'color diffuseColor' : [ r, g, b]
+    'color diffuseColor' : [r, g, b]
     })
 
 def CompileShader(shader):
@@ -74,8 +74,8 @@ if __name__ == "__main__":
 
     # Camera coordinate system
     ri.Projection(ri.PERSPECTIVE)
-    ri.Translate(0, 0, 2)
-    #ri.Rotate(50, 1, 0, 0)
+    ri.Translate(0, 0, 5)
+    ri.Rotate(50, 1, 0, 0)
 
     # World coordinate system
     ri.WorldBegin()
@@ -88,7 +88,7 @@ if __name__ == "__main__":
     roll_height = 1.06
     roll_outerRadius = 1.04
     roll_innerRadius = 0.49
-    #CreateRoll(roll_height, roll_outerRadius, roll_innerRadius)
+    CreateRoll(roll_height, roll_outerRadius, roll_innerRadius)
     ri.AttributeEnd()
     ri.TransformEnd()
 
@@ -96,16 +96,7 @@ if __name__ == "__main__":
     ri.TransformBegin()
     ri.AttributeBegin()
     ri.Attribute ("identifier", {"name": "Surface"})
-
-    # Small = 18, 9, 0
-    # Medium = 32, 22, 14
-    # Large = 50, 44, 36
-
-    ri.Pattern("testing", "testing", { "point circlesPerRow" : [50, 44, 36] })
-    ri.Bxdf("PxrSurface", "plastic",{
-          "reference color diffuseColor" : ["testing:resultRGB"],
-    })
-    #Diffuse(0.95, 0.8, 0.43)
+    Diffuse(0.95, 0.8, 0.43)
     cube_width = 5
     cube_height = 5
     cube_depth = 0.5

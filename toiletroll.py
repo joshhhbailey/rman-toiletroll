@@ -36,19 +36,25 @@ def CreateRoll(height = 1.0, outerRadius = 1.0, innerRadius = 0.5):
     ri.Cylinder(innerRadius, -height, height, 360)
     ri.AttributeEnd()
     # Outer tube
+    ri.AttributeBegin()
+    ri.Pattern("rollPattern", "rollPattern", { "point circlesPerRing" : [50, 44, 36] })
+    ri.Bxdf("PxrSurface", "plastic",{
+          "reference color diffuseColor" : ["rollPattern:resultRGB"],
+    })
     ri.Cylinder(outerRadius, -height, height, 360)
+    ri.AttributeEnd()
     # Top
     ri.Hyperboloid([innerRadius, 0.0, -height], [outerRadius, 0.0, -height], 360)
 
 def Diffuse(r = 1.0, g = 1.0, b = 1.0):
     ri.Bxdf( 'PxrDiffuse','diffuse', 
     {
-    'color diffuseColor' : [ r, g, b]
+    'color diffuseColor' : [r, g, b]
     })
 
 def CompileShader(shader):
     # The following function is from:
-    # Macey, J,. 2018. Lecture4Shaders. [online]
+    # Macey, J., 2018. Lecture4Shaders. [online]
     # Available from: https://github.com/NCCA/Renderman/blob/master/Lecture4Shaders/Bands/bands.py
     # Accessed [25 March 2021]
   	if os.path.isfile(shader + ".oso") != True or os.stat(shader + ".osl").st_mtime - os.stat(shader + ".oso").st_mtime > 0:
@@ -59,7 +65,7 @@ def CompileShader(shader):
 		    sys.exit('shader compilation failed')
 
 if __name__ == "__main__":
-    CompileShader("circles")
+    CompileShader("rollPattern")
     ri = prman.Ri()     # Create RenderMan interface instance
 
     ri.Begin("__render")    # Begin .rib and pass to renderer

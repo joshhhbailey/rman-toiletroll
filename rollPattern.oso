@@ -1,7 +1,7 @@
 OpenShadingLanguage 1.00
 # Compiled by oslc 1.8.2.pixar1697a56
 # options: 
-shader testing
+shader rollPattern
 param	float	s	0		%meta{int,lockgeom,0}  %read{3,3} %write{2147483647,-1}
 param	float	t	0		%meta{int,lockgeom,0}  %read{9,9} %write{2147483647,-1}
 param	float	s_repeats	5		%read{3,3} %write{2147483647,-1}

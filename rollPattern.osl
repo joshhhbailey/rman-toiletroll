@@ -3,7 +3,7 @@
 // Available from: https://www.fundza.com/rfm/osl/rosette/index.html
 // Accessed [25 March 2021]
 
-shader testing(
+shader rollPattern(
     // Can be interpolated from an 's' or 't' variable attached to the geometry
     float s = 0 [[int lockgeom = 0]],
     float t = 0 [[int lockgeom = 0]],
