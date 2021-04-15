@@ -3,13 +3,25 @@ import sys
 import sys,os.path,subprocess
 
 def CreateCube(width = 1.0, height = 1.0, depth = 1.0):   
-    # The following function is from:
+    # The following function is adapted from:
     # Macey, J,. 2020. Introduction to Renderman and Python. [online]
     # Available from: https://nccastaff.bournemouth.ac.uk/jmacey/msc/renderman/lectures/Lecture1/
     # Accessed [23 March 2021]
     w = width / 2.0
     h = height / 2.0
     d = depth / 2.0
+
+    ri.Pattern('table','table', 
+    { 
+    	'string path' : ["images/woodtest.tx"]
+    })
+    ri.Bxdf('PxrSurface', 'wood',
+    {
+    	'reference color diffuseColor' : ['table:resultRGB'],
+    	'int diffuseDoubleSided' : [1],
+    	'float reflectionGain' : [0.2]
+	})
+
     # Rear
     face = [-w, -h, d, -w, h, d, w, -h, d, w, h, d]                                
     ri.Patch("bilinear", {'P':face})
@@ -81,6 +93,7 @@ def CompileShader(shader):
 
 if __name__ == "__main__":
     CompileShader("rollPattern")
+    CompileShader("table")
     ri = prman.Ri()     # Create RenderMan interface instance
 
     ri.Begin("__render")    # Begin .rib and pass to renderer
@@ -107,16 +120,30 @@ if __name__ == "__main__":
     ri.AttributeEnd()
     ri.TransformEnd()
 
-    # Create surface
+    # Create table
     ri.TransformBegin()
     ri.AttributeBegin()
-    ri.Attribute ("identifier", {"name": "Surface"})
+    ri.Attribute ("identifier", {"name": "Table"})
     Diffuse(0.95, 0.8, 0.43)
-    cube_width = 5
-    cube_height = 5
-    cube_depth = 0.5
-    ri.Translate(0, 0, roll_height + (cube_depth / 2))
-    CreateCube(cube_width, cube_height, cube_depth)
+    table_width = 5
+    table_height = 5
+    table_depth = 0.5
+    ri.Translate(0, 0, roll_height + (table_depth / 2))
+    CreateCube(table_width, table_height, table_depth)
+    ri.AttributeEnd()
+    ri.TransformEnd()
+
+    # Create HDRI
+    ri.TransformBegin()
+    ri.AttributeBegin()
+    ri.Attribute ("identifier", {"name": "HDRI Light"})
+    ri.Rotate(180, 1, 0, 0)
+    ri.Rotate(122, 0, 0, 1)
+    ri.Light("PxrDomeLight", "HDRILight",
+    {
+        "float exposure" : [0],
+        "string lightColorMap" : ["images/hdritest.tx"]
+    })
     ri.AttributeEnd()
     ri.TransformEnd()
 

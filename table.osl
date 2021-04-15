@@ -1,0 +1,7 @@
+shader table(
+	string path = "",
+	output color resultRGB = 0
+)
+{
+    resultRGB = (color)texture(path, u, v);
+}
