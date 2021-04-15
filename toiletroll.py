@@ -37,9 +37,24 @@ def CreateRoll(height = 1.0, outerRadius = 1.0, innerRadius = 0.5):
     ri.AttributeEnd()
     # Outer tube
     ri.AttributeBegin()
-    ri.Pattern("rollPattern", "rollPattern", { "point circlesPerRing" : [50, 44, 36] })
-    ri.Bxdf("PxrSurface", "plastic",{
-          "reference color diffuseColor" : ["rollPattern:resultRGB"],
+    ri.Attribute("displacementbound", 
+    {
+        "sphere" : [1],
+        "coordinatesystem" : ["shader"]
+    })
+    # Apply shader
+    ri.Pattern("rollPattern", "rollPattern",
+    {
+        "point circlesPerRing" : [50, 44, 36]
+    })
+    # Displace shader
+    ri.Displace("PxrDisplace", "disp",
+    {
+        "reference float dispScalar" : ["rollPattern:dispOut"]
+    })
+    ri.Bxdf("PxrSurface", "surf",
+    {
+        "reference color diffuseColor" : ["rollPattern:resultRGB"],
     })
     ri.Cylinder(outerRadius, -height, height, 360)
     ri.AttributeEnd()
@@ -70,7 +85,7 @@ if __name__ == "__main__":
 
     ri.Begin("__render")    # Begin .rib and pass to renderer
     ri.Display("toiletroll.exr", "framebuffer", "rgba")       # File, Buffer, Colour Channels
-    ri.Format(512, 512, 1)                              # Width, Height, Aspect Ratio
+    ri.Format(1024, 1024, 1)                              # Width, Height, Aspect Ratio
 
     # Camera coordinate system
     ri.Projection(ri.PERSPECTIVE)
