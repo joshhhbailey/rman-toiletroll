@@ -3,7 +3,7 @@
 // Available from: https://www.fundza.com/rfm/osl/rosette/index.html
 // Accessed [25 March 2021]
 
-shader rollPattern(
+shader tissuePatternCircles(
     // Can be interpolated from an 's' or 't' variable attached to the geometry
     float s = 0 [[int lockgeom = 0]],
     float t = 0 [[int lockgeom = 0]],
@@ -14,14 +14,19 @@ shader rollPattern(
     // Circle properties
     float innerRadius = 0.0,
     float outerRadius = 0.010,
-    color circleColour = color(0.9, 0.9, 0.9),
+    color circleColour = color(0.8, 0.8, 0.8),
 
     // Row properties
     int ringsPerCircle = 3,
     point circlesPerRing = point (18, 9, 0),    // Small = 18, 9, 0   Medium = 32, 22, 14   Large = 50, 44, 36
     float distanceBetweenRows = outerRadius * 5,
 
-    color bgColour = color(1.0, 1.0, 1.0),
+    color bgColour = color(0.9, 0.9, 0.9),
+
+    // Noise
+    float height = 0.001,
+    int frequency = 50,
+
     output color resultRGB = 0,
     output float dispOut = 0)
 {
@@ -40,6 +45,7 @@ shader rollPattern(
     float rotT;
 
     resultRGB = bgColour;
+    dispOut = height * (float)noise("perlin", P * frequency);
 
     // Centre point of circle (to rotate around)
     point centrePoint = point(s_centre, t_centre, 0);

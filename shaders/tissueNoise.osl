@@ -1,0 +1,11 @@
+shader tissueNoise(
+    color colour = color(0.9, 0.9, 0.9),
+    float height = 0.001,
+    int frequency = 200,
+
+    output color resultRGB = 0,
+    output float dispOut = 0)
+{
+    resultRGB = colour;
+    dispOut = height * (float)noise("perlin", P * frequency);
+}

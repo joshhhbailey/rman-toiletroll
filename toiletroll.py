@@ -2,15 +2,16 @@ import prman
 import sys
 import sys,os.path,subprocess
 
-def CreateCube(width = 1.0, height = 1.0, depth = 1.0):   
+def CreateCube(_width = 1.0, _height = 1.0, _depth = 1.0):   
     # The following function is adapted from:
     # Macey, J,. 2020. Introduction to Renderman and Python. [online]
     # Available from: https://nccastaff.bournemouth.ac.uk/jmacey/msc/renderman/lectures/Lecture1/
     # Accessed [23 March 2021]
-    w = width / 2.0
-    h = height / 2.0
-    d = depth / 2.0
+    w = _width / 2.0
+    h = _height / 2.0
+    d = _depth / 2.0
 
+    # Apply texture
     ri.Pattern('table','table', 
     { 
     	'string path' : ["images/woodtest.tx"]
@@ -41,12 +42,13 @@ def CreateCube(width = 1.0, height = 1.0, depth = 1.0):
     face = [w, h, d, w, h, -d, -w, h, d, -w, h, -d]                                
     ri.Patch("bilinear", {'P':face})
 
-def CreateRoll(height = 1.0, outerRadius = 1.0, innerRadius = 0.5):
+def CreateRoll(_height = 1.0, _outerRadius = 1.0, _innerRadius = 0.5):
     # Inner tube
     ri.AttributeBegin()
     Diffuse(0.45, 0.4, 0.33)
-    ri.Cylinder(innerRadius, -height, height, 360)
+    ri.Cylinder(_innerRadius, -_height, _height, 360)
     ri.AttributeEnd()
+    
     # Outer tube
     ri.AttributeBegin()
     ri.Attribute("displacementbound", 
@@ -54,46 +56,73 @@ def CreateRoll(height = 1.0, outerRadius = 1.0, innerRadius = 0.5):
         "sphere" : [1],
         "coordinatesystem" : ["shader"]
     })
-    # Apply shader
-    ri.Pattern("rollPattern", "rollPattern",
+    ri.Pattern("tissuePatternCircles", "tissuePatternCircles",
     {
         "point circlesPerRing" : [50, 44, 36]
     })
-    # Displace shader
     ri.Displace("PxrDisplace", "disp",
     {
-        "reference float dispScalar" : ["rollPattern:dispOut"]
+        "reference float dispScalar" : ["tissuePatternCircles:dispOut"]
     })
-    ri.Bxdf("PxrSurface", "surf",
+    ri.Bxdf("PxrSurface", "pattern",
     {
-        "reference color diffuseColor" : ["rollPattern:resultRGB"],
+        "reference color diffuseColor" : ["tissuePatternCircles:resultRGB"],
+        'int diffuseDoubleSided' : [1],
+        'float subsurfaceGain' : [0.3],
+        'color subsurfaceColor' : [0.001,0.001,0.001],
+        'float diffuseRoughness' : [0.7],
     })
-    ri.Cylinder(outerRadius, -height, height, 360)
+    ri.Cylinder(_outerRadius, -_height, _height, 360)
     ri.AttributeEnd()
-    # Top
-    ri.Hyperboloid([innerRadius, 0.0, -height], [outerRadius, 0.0, -height], 360)
 
-def Diffuse(r = 1.0, g = 1.0, b = 1.0):
-    ri.Bxdf( 'PxrDiffuse','diffuse', 
+    # Top
+    ri.AttributeBegin()
+    ri.Attribute('displacementbound', 
     {
-    'color diffuseColor' : [r, g, b]
+        'sphere' : [1],
+        'coordinatesystem' : ['shader']
+    })
+    ri.Pattern('tissueNoise', 'tissueNoise',
+    {
+    })
+    ri.Displace('PxrDisplace', 'myDisp',
+    {
+        'reference float dispScalar' : ['tissueNoise:dispOut']
+    })
+    ri.Bxdf('PxrSurface', 'top',
+    {
+        'reference color diffuseColor' : ['tissueNoise:resultRGB'],
+        'int diffuseDoubleSided' : [1],
+        'float subsurfaceGain' : [0.3],
+        'color subsurfaceColor' : [0.001,0.001,0.001],
+        'float diffuseRoughness' : [0.7],
+    })
+    ri.Hyperboloid([_innerRadius, 0.0, -_height], [_outerRadius, 0.0, -_height], 360)
+    ri.AttributeEnd()
+
+def Diffuse(_r = 1.0, _g = 1.0, _b = 1.0):
+    ri.Bxdf("PxrDiffuse", "diffuse", 
+    {
+        "color diffuseColor" : [_r, _g, _b]
     })
 
-def CompileShader(shader):
+def CompileShader(_shader):
     # The following function is from:
     # Macey, J., 2018. Lecture4Shaders. [online]
     # Available from: https://github.com/NCCA/Renderman/blob/master/Lecture4Shaders/Bands/bands.py
     # Accessed [25 March 2021]
-  	if os.path.isfile(shader + ".oso") != True or os.stat(shader + ".osl").st_mtime - os.stat(shader + ".oso").st_mtime > 0:
-	    print("compiling shader %s" %(shader))
+  	if os.path.isfile(_shader + ".oso") != True or os.stat(_shader + ".osl").st_mtime - os.stat(_shader + ".oso").st_mtime > 0:
+	    print("compiling shader %s" %(_shader))
 	    try:
-		    subprocess.check_call(["oslc", shader + ".osl"])
+		    subprocess.check_call(["oslc", _shader + ".osl"])
 	    except subprocess.CalledProcessError:
 		    sys.exit('shader compilation failed')
 
 if __name__ == "__main__":
-    CompileShader("rollPattern")
-    CompileShader("table")
+    CompileShader("shaders/tissuePatternCircles")
+    CompileShader("shaders/table")
+    CompileShader("shaders/tissueNoise")
+
     ri = prman.Ri()     # Create RenderMan interface instance
 
     ri.Begin("__render")    # Begin .rib and pass to renderer
@@ -102,7 +131,7 @@ if __name__ == "__main__":
 
     # Camera coordinate system
     ri.Projection(ri.PERSPECTIVE)
-    ri.Translate(0, 0, 5)
+    ri.Translate(0, 0, 2)
     ri.Rotate(50, 1, 0, 0)
 
     # World coordinate system
@@ -112,7 +141,6 @@ if __name__ == "__main__":
     ri.TransformBegin()
     ri.AttributeBegin()
     ri.Attribute ("identifier", {"name": "Toilet Roll"})
-    Diffuse(1.0, 1.0, 1.0)
     roll_height = 1.06
     roll_outerRadius = 1.04
     roll_innerRadius = 0.49
@@ -124,7 +152,6 @@ if __name__ == "__main__":
     ri.TransformBegin()
     ri.AttributeBegin()
     ri.Attribute ("identifier", {"name": "Table"})
-    Diffuse(0.95, 0.8, 0.43)
     table_width = 5
     table_height = 5
     table_depth = 0.5

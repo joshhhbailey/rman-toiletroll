@@ -1,0 +1,25 @@
+OpenShadingLanguage 1.00
+# Compiled by oslc 1.8.2.pixar1697a56
+# options: 
+shader tissueNoise
+param	color	colour	0.89999998 0.89999998 0.89999998		%read{0,0} %write{2147483647,-1}
+param	float	height	0.001		%read{4,4} %write{2147483647,-1}
+param	int	frequency	200		%read{1,1} %write{2147483647,-1}
+oparam	color	resultRGB	0 0 0		%read{2147483647,-1} %write{0,0}
+oparam	float	dispOut	0		%read{2147483647,-1} %write{4,4}
+global	point	P	%read{2,2} %write{2147483647,-1}
+temp	float	$tmp1	%read{4,4} %write{3,3}
+const	string	$const1	"perlin"		%read{3,3} %write{2147483647,-1}
+temp	point	$tmp2	%read{3,3} %write{2,2}
+temp	point	$tmp3	%read{2,2} %write{1,1}
+code ___main___
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissueNoise.osl:10
+#     dispOut = height * (float)noise("perlin", P * frequency);
+	assign		resultRGB colour 	%filename{"C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissueNoise.osl"} %line{10} %argrw{"wr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissueNoise.osl:11
+# }
+	assign		$tmp3 frequency 	%line{11} %argrw{"wr"}
+	mul		$tmp2 P $tmp3 	%argrw{"wrr"}
+	noise		$tmp1 $const1 $tmp2 	%argrw{"wrr"}
+	mul		dispOut height $tmp1 	%argrw{"wrr"}
+	end
