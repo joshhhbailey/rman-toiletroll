@@ -42,7 +42,7 @@ def CreateCube(_width = 1.0, _height = 1.0, _depth = 1.0):
     face = [w, h, d, w, h, -d, -w, h, d, -w, h, -d]                                
     ri.Patch("bilinear", {'P':face})
 
-def CreateRoll(_height = 1.0, _outerRadius = 1.0, _innerRadius = 0.5):
+def CreateRoll(_height = 1.0, _outerRadius = 1.0, _innerRadius = 0.5, _pattern = "tissuePatternWave"):
     # Inner tube
     ri.AttributeBegin()
     Diffuse(0.45, 0.4, 0.33)
@@ -56,17 +56,19 @@ def CreateRoll(_height = 1.0, _outerRadius = 1.0, _innerRadius = 0.5):
         "sphere" : [1],
         "coordinatesystem" : ["shader"]
     })
-    ri.Pattern("tissuePatternCircles", "tissuePatternCircles",
+    ri.Pattern(_pattern, _pattern,
     {
         "point circlesPerRing" : [50, 44, 36]
     })
+    displacement = _pattern + ":dispOut"
     ri.Displace("PxrDisplace", "disp",
     {
-        "reference float dispScalar" : ["tissuePatternCircles:dispOut"]
+        "reference float dispScalar" : [displacement]
     })
+    colour = _pattern + ":resultRGB"
     ri.Bxdf("PxrSurface", "pattern",
     {
-        "reference color diffuseColor" : ["tissuePatternCircles:resultRGB"],
+        "reference color diffuseColor" : [colour],
         'int diffuseDoubleSided' : [1],
         'float subsurfaceGain' : [0.3],
         'color subsurfaceColor' : [0.001,0.001,0.001],
@@ -120,8 +122,9 @@ def CompileShader(_shader):
 
 if __name__ == "__main__":
     CompileShader("shaders/tissuePatternCircles")
-    CompileShader("shaders/table")
+    CompileShader("shaders/tissuePatternWave")
     CompileShader("shaders/tissueNoise")
+    CompileShader("shaders/table")
 
     ri = prman.Ri()     # Create RenderMan interface instance
 
@@ -144,7 +147,7 @@ if __name__ == "__main__":
     roll_height = 1.06
     roll_outerRadius = 1.04
     roll_innerRadius = 0.49
-    CreateRoll(roll_height, roll_outerRadius, roll_innerRadius)
+    CreateRoll(roll_height, roll_outerRadius, roll_innerRadius, "tissuePatternWave")
     ri.AttributeEnd()
     ri.TransformEnd()
 

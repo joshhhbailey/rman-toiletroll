@@ -1,0 +1,32 @@
+shader tissuePatternWave(
+    // Can be interpolated from an 's' or 't' variable attached to the geometry
+    float s = 0 [[int lockgeom = 0]],
+    float t = 0 [[int lockgeom = 0]],
+
+    float s_repeats = 1,
+    float t_repeats = 12,
+
+    // Noise
+    float height = 0.001,
+    int frequency = 50,
+
+    output color resultRGB = 0,
+    output float dispOut = 0)
+{
+    resultRGB = color(1.0, 1.0, 1.0);
+    dispOut = height * (float)noise("perlin", P * frequency);
+    
+    // Mirroring
+    float ss = mod(s * s_repeats, 1);
+    float tt = mod(t * t_repeats, 1);
+
+    // Wave properties
+    float amplitude = 0.3;
+    float waveLength = 3.141 * 12;
+    float offset = 0.5;
+
+    float curve = amplitude * sin(waveLength * ss);
+    float lineShape = smoothstep(1.0 - clamp(distance(curve + tt, offset) * 1.0, 0.0, 1.0), 1.0, 0.95);
+
+    dispOut -= (1.0 - lineShape) * 0.01;
+}
