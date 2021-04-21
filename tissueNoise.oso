@@ -3,7 +3,7 @@ OpenShadingLanguage 1.00
 # options: 
 shader tissueNoise
 param	color	colour	0.89999998 0.89999998 0.89999998		%read{0,0} %write{2147483647,-1}
-param	float	height	0.001		%read{4,4} %write{2147483647,-1}
+param	float	height	0.0040000002		%read{4,4} %write{2147483647,-1}
 param	int	frequency	200		%read{1,1} %write{2147483647,-1}
 oparam	color	resultRGB	0 0 0		%read{2147483647,-1} %write{0,0}
 oparam	float	dispOut	0		%read{2147483647,-1} %write{4,4}

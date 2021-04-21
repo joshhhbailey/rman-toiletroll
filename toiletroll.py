@@ -1,6 +1,7 @@
 import prman
 import sys
-import sys,os.path,subprocess
+import sys, os.path, subprocess
+import random
 
 def CreateCube(_width = 1.0, _height = 1.0, _depth = 1.0):   
     # The following function is adapted from:
@@ -13,8 +14,12 @@ def CreateCube(_width = 1.0, _height = 1.0, _depth = 1.0):
 
     # Apply texture
     ri.Pattern('table','table', 
-    { 
-    	'string path' : ["images/woodtest.tx"]
+    {
+        # Texture acquired from:
+        # Texture Haven,. 2021. plywood [online]
+        # Available from: https://texturehaven.com/tex/?c=wood&t=plywood
+        # Accessed [15 April 2021]
+    	'string path' : ["images/textures/woodtest.tx"]
     })
     ri.Bxdf('PxrSurface', 'wood',
     {
@@ -77,7 +82,7 @@ def CreateRoll(_height = 1.0, _outerRadius = 1.0, _innerRadius = 0.5, _pattern =
     ri.Cylinder(_outerRadius, -_height, _height, 360)
     ri.AttributeEnd()
 
-    # Top
+    # Top / Bottom
     ri.AttributeBegin()
     ri.Attribute('displacementbound', 
     {
@@ -100,7 +105,37 @@ def CreateRoll(_height = 1.0, _outerRadius = 1.0, _innerRadius = 0.5, _pattern =
         'float diffuseRoughness' : [0.7],
     })
     ri.Hyperboloid([_innerRadius, 0.0, -_height], [_outerRadius, 0.0, -_height], 360)
+    ri.Hyperboloid([_innerRadius, 0.0, _height], [_outerRadius, 0.0, _height], 360)
     ri.AttributeEnd()
+
+def CreateRollPyramid(_layers, _height = 1.0, _outerRadius = 1.0, _innerRadius = 0.5, _pattern = "tissuePatternWave"):
+    pattern = _pattern
+    for i in range(_layers):
+        offset = (_layers - i) / 2.0
+        currentRolls = _layers - i
+        # Move to furthest left roll position
+        ri.Translate(-(offset * _outerRadius * 2) + _outerRadius, 0, 0)
+
+        for j in range(currentRolls):
+            # Calculate random pattern and rotation
+            angle = random.randint(0, 360)
+            if pattern == "random":
+                if random.randint(0, 1):
+                    _pattern = "tissuePatternWave"
+                else:
+                    _pattern = "tissuePatternCircles"
+                    
+            # Create toilet roll
+            ri.Rotate(angle, 0, 0, 1)
+            CreateRoll(_height, _outerRadius, _innerRadius, _pattern)
+            ri.Rotate(-angle, 0, 0, 1)
+            
+            # Move right
+            if j < currentRolls - 1:
+                ri.Translate(_outerRadius * 2, 0, 0)
+
+        # Move to centre of next layer
+        ri.Translate(-(offset * _outerRadius * 2) + _outerRadius, 0, -_height * 2)
 
 def Diffuse(_r = 1.0, _g = 1.0, _b = 1.0):
     ri.Bxdf("PxrDiffuse", "diffuse", 
@@ -134,8 +169,8 @@ if __name__ == "__main__":
 
     # Camera coordinate system
     ri.Projection(ri.PERSPECTIVE)
-    ri.Translate(0, 0, 2)
-    ri.Rotate(50, 1, 0, 0)
+    ri.Translate(0, -2, 6)
+    ri.Rotate(70, 1, 0, 0)
 
     # World coordinate system
     ri.WorldBegin()
@@ -147,7 +182,8 @@ if __name__ == "__main__":
     roll_height = 1.06
     roll_outerRadius = 1.04
     roll_innerRadius = 0.49
-    CreateRoll(roll_height, roll_outerRadius, roll_innerRadius, "tissuePatternWave")
+    #CreateRoll(roll_height, roll_outerRadius, roll_innerRadius, "tissuePatternWave")
+    CreateRollPyramid(3, 1.06, 1.04, 0.49, "random")
     ri.AttributeEnd()
     ri.TransformEnd()
 
@@ -155,24 +191,28 @@ if __name__ == "__main__":
     ri.TransformBegin()
     ri.AttributeBegin()
     ri.Attribute ("identifier", {"name": "Table"})
-    table_width = 5
-    table_height = 5
+    table_width = 6
+    table_height = 4
     table_depth = 0.5
     ri.Translate(0, 0, roll_height + (table_depth / 2))
     CreateCube(table_width, table_height, table_depth)
     ri.AttributeEnd()
     ri.TransformEnd()
 
-    # Create HDRI
+    # Create environment map
     ri.TransformBegin()
     ri.AttributeBegin()
-    ri.Attribute ("identifier", {"name": "HDRI Light"})
+    ri.Attribute ("identifier", {"name": "Environment Map"})
     ri.Rotate(180, 1, 0, 0)
-    ri.Rotate(122, 0, 0, 1)
-    ri.Light("PxrDomeLight", "HDRILight",
+    ri.Rotate(-66, 0, 0, 1)
+    ri.Light("PxrDomeLight", "EnvMapLight",
     {
         "float exposure" : [0],
-        "string lightColorMap" : ["images/hdritest.tx"]
+        # HDRI acquired from:
+        # HDRI Haven,. 2021. Lebombo [online]
+        # Available from: https://hdrihaven.com/hdri/?c=indoor&h=lebombo
+        # Accessed [21 April 2021]
+        "string lightColorMap" : ["images/env-map/lebombo_4k.tx"]
     })
     ri.AttributeEnd()
     ri.TransformEnd()

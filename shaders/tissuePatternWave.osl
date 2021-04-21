@@ -4,16 +4,16 @@ shader tissuePatternWave(
     float t = 0 [[int lockgeom = 0]],
 
     float s_repeats = 1,
-    float t_repeats = 12,
+    float t_repeats = 20,
 
     // Noise
-    float height = 0.001,
-    int frequency = 50,
+    float height = 0.005,
+    int frequency = 10,
 
     output color resultRGB = 0,
     output float dispOut = 0)
 {
-    resultRGB = color(1.0, 1.0, 1.0);
+    resultRGB = color(0.95, 0.95, 0.95);
     dispOut = height * (float)noise("perlin", P * frequency);
     
     // Mirroring

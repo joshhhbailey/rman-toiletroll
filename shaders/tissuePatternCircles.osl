@@ -14,18 +14,15 @@ shader tissuePatternCircles(
     // Circle properties
     float innerRadius = 0.0,
     float outerRadius = 0.010,
-    color circleColour = color(0.8, 0.8, 0.8),
 
     // Row properties
     int ringsPerCircle = 3,
     point circlesPerRing = point (18, 9, 0),    // Small = 18, 9, 0   Medium = 32, 22, 14   Large = 50, 44, 36
     float distanceBetweenRows = outerRadius * 5,
 
-    color bgColour = color(0.9, 0.9, 0.9),
-
     // Noise
-    float height = 0.001,
-    int frequency = 50,
+    float height = 0.005,
+    int frequency = 10,
 
     output color resultRGB = 0,
     output float dispOut = 0)
@@ -44,7 +41,7 @@ shader tissuePatternCircles(
     float rotS;
     float rotT;
 
-    resultRGB = bgColour;
+    resultRGB = color(0.95, 0.95, 0.95);
     dispOut = height * (float)noise("perlin", P * frequency);
 
     // Centre point of circle (to rotate around)
@@ -68,8 +65,7 @@ shader tissuePatternCircles(
             float dist = distance(point(sOffset, tOffset, 0), point(rotS, rotT, 0));
             if (dist <= outerRadius && dist >= innerRadius)
             {
-                resultRGB = circleColour;   // Exaggerate displacement
-                dispOut -= dist;
+                dispOut -= dist * 2;
             }
         }
         sOffset -= distanceBetweenRows;
