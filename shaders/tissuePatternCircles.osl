@@ -1,8 +1,3 @@
-// The following shader is adapted from:
-// Kesson, M., 2002. OSL Rosette. [online]
-// Available from: https://www.fundza.com/rfm/osl/rosette/index.html
-// Accessed [25 March 2021]
-
 shader tissuePatternCircles(
     // Can be interpolated from an 's' or 't' variable attached to the geometry
     float s = 0 [[int lockgeom = 0]],
@@ -17,32 +12,59 @@ shader tissuePatternCircles(
 
     // Row properties
     int ringsPerCircle = 3,
-    point circlesPerRing = point (18, 9, 0),    // Small = 18, 9, 0   Medium = 32, 22, 14   Large = 50, 44, 36
+    point circlesPerRing = point(18, 9, 0),    // Small = 18, 9, 0   Medium = 32, 22, 14   Large = 50, 44, 36
     float distanceBetweenRows = outerRadius * 5,
 
     // Noise
     float height = 0.005,
-    int frequency = 10,
+    int frequency = 5,
 
     output color resultRGB = 0,
     output float dispOut = 0)
 {
+    // Mirroring
+    float ss = mod(s * s_repeats, 1);
+    float tt = mod(t * t_repeats, 1);   
+
+    // Displace and colour blank canvas
+    resultRGB = color(0.95, 0.95, 0.95);
+    dispOut = height * (float)noise("perlin", P * frequency);
+
+/// STIPPLING START
+    float stipRepeats = 2;
+    float stipSS = mod(s * stipRepeats, 1);
+
+    color lineColour = color(0.0, 0.0, 0.0);
+    float lineWidth = 0.001;
+    
+    // Draw line
+    if (stipSS < lineWidth)
+    {
+        lineColour = color(0.95, 0.95, 0.95);
+    }
+    
+    // Incrementally indent line, to create stippled effect
+    float waveLength = 3.141 * 30;
+    color wave = color(sin(waveLength * t));
+    wave *= lineColour;
+
+    dispOut += wave[0] / 150;
+/// STIPPLING END
+
+/// PATTERN START
+// The following part is adapted from:
+// Kesson, M., 2002. OSL Rosette. [online]
+// Available from: https://www.fundza.com/rfm/osl/rosette/index.html
+// Accessed [25 March 2021]
     // Circle centre position
     float s_centre = 0.5;
     float t_centre = 0.5;
-
-    // Mirroring
-    float ss = mod(s * s_repeats, 1);
-    float tt = mod(t * t_repeats, 1);
 
     float circleSize = (25 * outerRadius);
     point stPoint = point(ss, tt, 0);
     point rotPoint;
     float rotS;
     float rotT;
-
-    resultRGB = color(0.95, 0.95, 0.95);
-    dispOut = height * (float)noise("perlin", P * frequency);
 
     // Centre point of circle (to rotate around)
     point centrePoint = point(s_centre, t_centre, 0);
@@ -71,4 +93,5 @@ shader tissuePatternCircles(
         sOffset -= distanceBetweenRows;
     }
     t_centre += 0.5;
+/// PATTERN END
 }

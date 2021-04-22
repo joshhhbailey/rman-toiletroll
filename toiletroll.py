@@ -61,9 +61,14 @@ def CreateRoll(_height = 1.0, _outerRadius = 1.0, _innerRadius = 0.5, _pattern =
         "sphere" : [1],
         "coordinatesystem" : ["shader"]
     })
+    noiseHeight = random.uniform(0.003, 0.007)
+    noiseFreq = random.randint(5, 8)
     ri.Pattern(_pattern, _pattern,
     {
-        "point circlesPerRing" : [50, 44, 36]
+        "point circlesPerRing" : [50, 44, 36],
+        "float height" : [noiseHeight],
+        "int frequency" : [noiseFreq]
+
     })
     displacement = _pattern + ":dispOut"
     ri.Displace("PxrDisplace", "disp",
@@ -77,7 +82,7 @@ def CreateRoll(_height = 1.0, _outerRadius = 1.0, _innerRadius = 0.5, _pattern =
         'int diffuseDoubleSided' : [1],
         'float subsurfaceGain' : [0.3],
         'color subsurfaceColor' : [0.001,0.001,0.001],
-        'float diffuseRoughness' : [0.7],
+        'float diffuseRoughness' : [0.7]
     })
     ri.Cylinder(_outerRadius, -_height, _height, 360)
     ri.AttributeEnd()
@@ -89,8 +94,12 @@ def CreateRoll(_height = 1.0, _outerRadius = 1.0, _innerRadius = 0.5, _pattern =
         'sphere' : [1],
         'coordinatesystem' : ['shader']
     })
+    noiseHeight = random.uniform(0.003, 0.005)
+    noiseFreq = random.randint(195, 205)
     ri.Pattern('tissueNoise', 'tissueNoise',
     {
+        #"float height" : [noiseHeight],
+        "int frequency" : [noiseFreq]
     })
     ri.Displace('PxrDisplace', 'myDisp',
     {
@@ -102,7 +111,7 @@ def CreateRoll(_height = 1.0, _outerRadius = 1.0, _innerRadius = 0.5, _pattern =
         'int diffuseDoubleSided' : [1],
         'float subsurfaceGain' : [0.3],
         'color subsurfaceColor' : [0.001,0.001,0.001],
-        'float diffuseRoughness' : [0.7],
+        'float diffuseRoughness' : [0.7]
     })
     ri.Hyperboloid([_innerRadius, 0.0, -_height], [_outerRadius, 0.0, -_height], 360)
     ri.Hyperboloid([_innerRadius, 0.0, _height], [_outerRadius, 0.0, _height], 360)
@@ -169,7 +178,7 @@ if __name__ == "__main__":
 
     # Camera coordinate system
     ri.Projection(ri.PERSPECTIVE)
-    ri.Translate(0, -2, 6)
+    ri.Translate(0, -2, 5)
     ri.Rotate(70, 1, 0, 0)
 
     # World coordinate system
@@ -182,7 +191,7 @@ if __name__ == "__main__":
     roll_height = 1.06
     roll_outerRadius = 1.04
     roll_innerRadius = 0.49
-    #CreateRoll(roll_height, roll_outerRadius, roll_innerRadius, "tissuePatternWave")
+    #CreateRoll(roll_height, roll_outerRadius, roll_innerRadius, "tissuePatternCircles")
     CreateRollPyramid(3, 1.06, 1.04, 0.49, "random")
     ri.AttributeEnd()
     ri.TransformEnd()

@@ -16,7 +16,7 @@ shader testing(
     point circlesPerRing = point (50, 44, 36),    // Small = 18, 9, 0   Medium = 32, 22, 14   Large = 50, 44, 36
     float distanceBetweenRows = outerRadius * 5,
 
-    color bgColour = color(0.9, 0.9, 0.9),
+    color bgColour = color(0.95, 0.95, 0.95),
 
     // Noise
     float height = 0.001,
@@ -25,22 +25,48 @@ shader testing(
     output color resultRGB = 0,
     output float dispOut = 0)
 {
-    // Circle centre position
-    float s_centre = 0.5;
-    float t_centre = 0.5;
-
     // Mirroring
     float ss = mod(s * s_repeats, 1);
     float tt = mod(t * t_repeats, 1);
+
+    // Displace blank canvas
+    dispOut = height * (float)noise("perlin", P * frequency);
+
+    color lineColour = color(0.0, 0.0, 0.0);
+    float lineWidth = 0.01;
+    
+    // Fill area with colour
+    if (t < lineWidth)
+    {
+        lineColour = color(0.95, 0.95, 0.95);
+    }
+    
+    // Overlay previos colour to create stippled effect
+    float waveLength = 50.0;
+    color colour = color(sin(waveLength * s));
+    colour *= lineColour;
+    
+    resultRGB = colour;
+
+    // Fill remaining area
+    if (t > lineWidth)
+    {
+        resultRGB = bgColour;
+    }
+
+
+
+    
+
+    // Circle centre position
+    float s_centre = 0.5;
+    float t_centre = 0.5;
 
     float circleSize = (25 * outerRadius);
     point stPoint = point(ss, tt, 0);
     point rotPoint;
     float rotS;
     float rotT;
-
-    resultRGB = bgColour;
-    dispOut = height * (float)noise("perlin", P * frequency);
 
     // Centre point of circle (to rotate around)
     point centrePoint = point(s_centre, t_centre, 0);
@@ -71,3 +97,26 @@ shader testing(
     }
     t_centre += 0.5;
 }
+
+/*shader testing(
+    // Can be interpolated from an 's' or 't' variable attached to the geometry
+    float s = 0 [[int lockgeom = 0]],
+    float t = 0 [[int lockgeom = 0]],
+    output color resultRGB = 0)
+{
+    color lineColour = color(0.0, 0.0, 0.0);
+    float lineWidth = 0.9;
+    
+    // Fill area with colour
+    if (t < lineWidth)
+    {
+        lineColour = color(1.0, 0.0, 0.0);
+    }
+    
+    // Overlay mask over colour, to create lines
+    float waveLength = 50.0;
+    color colour = color(sin(waveLength * s));
+    colour *= lineColour;
+
+    resultRGB = colour;
+}*/
