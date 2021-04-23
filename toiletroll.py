@@ -50,7 +50,26 @@ def CreateCube(_width = 1.0, _height = 1.0, _depth = 1.0):
 def CreateRoll(_height = 1.0, _outerRadius = 1.0, _innerRadius = 0.5, _pattern = "tissuePatternWave"):
     # Inner tube
     ri.AttributeBegin()
-    Diffuse(0.45, 0.4, 0.33)
+    ri.Attribute("displacementbound", 
+    {
+        "sphere" : [1],
+        "coordinatesystem" : ["shader"]
+    })
+    ri.Pattern("tube", "tube",
+    {
+    })
+    ri.Displace("PxrDisplace", "disp",
+    {
+        "reference float dispScalar" : ["tube:dispOut"]
+    })
+    ri.Bxdf("PxrSurface", "pattern",
+    {
+        "reference color diffuseColor" : ["tube:resultRGB"],
+        'int diffuseDoubleSided' : [1],
+        'float subsurfaceGain' : [0.3],
+        'color subsurfaceColor' : [0.001,0.001,0.001],
+        'float diffuseRoughness' : [0.7]
+    })
     ri.Cylinder(_innerRadius, -_height, _height, 360)
     ri.AttributeEnd()
     
@@ -98,7 +117,7 @@ def CreateRoll(_height = 1.0, _outerRadius = 1.0, _innerRadius = 0.5, _pattern =
     noiseFreq = random.randint(195, 205)
     ri.Pattern('tissueNoise', 'tissueNoise',
     {
-        #"float height" : [noiseHeight],
+        "float height" : [noiseHeight],
         "int frequency" : [noiseFreq]
     })
     ri.Displace('PxrDisplace', 'myDisp',
@@ -146,12 +165,6 @@ def CreateRollPyramid(_layers, _height = 1.0, _outerRadius = 1.0, _innerRadius =
         # Move to centre of next layer
         ri.Translate(-(offset * _outerRadius * 2) + _outerRadius, 0, -_height * 2)
 
-def Diffuse(_r = 1.0, _g = 1.0, _b = 1.0):
-    ri.Bxdf("PxrDiffuse", "diffuse", 
-    {
-        "color diffuseColor" : [_r, _g, _b]
-    })
-
 def CompileShader(_shader):
     # The following function is from:
     # Macey, J., 2018. Lecture4Shaders. [online]
@@ -168,6 +181,7 @@ if __name__ == "__main__":
     CompileShader("shaders/tissuePatternCircles")
     CompileShader("shaders/tissuePatternWave")
     CompileShader("shaders/tissueNoise")
+    CompileShader("shaders/tube")
     CompileShader("shaders/table")
 
     ri = prman.Ri()     # Create RenderMan interface instance
@@ -179,7 +193,7 @@ if __name__ == "__main__":
     # Camera coordinate system
     ri.Projection(ri.PERSPECTIVE)
     ri.Translate(0, -2, 5)
-    ri.Rotate(70, 1, 0, 0)
+    ri.Rotate(60, 1, 0, 0)
 
     # World coordinate system
     ri.WorldBegin()
