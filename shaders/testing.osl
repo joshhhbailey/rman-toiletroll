@@ -3,44 +3,123 @@ shader testing(
     float s = 0 [[int lockgeom = 0]],
     float t = 0 [[int lockgeom = 0]],
 
-    float s_repeats = 1,
-    float t_repeats = 1,
+    float s_repeats = 4,
+    float t_repeats = 4,
+    
+    // Circle properties
+    float innerRadius = 0.0,
+    float outerRadius = 0.010,
+
+    // Row properties
+    int rings = 3,
+    float distanceBetweenRows = outerRadius * 5,
 
     // Noise
-    float height = 0.75,
-    int frequency = 75,
+    float height = 0.005,
+    int frequency = 5,
 
     output color resultRGB = 0,
     output float dispOut = 0)
 {
     // Mirroring
     float ss = mod(s * s_repeats, 1);
-    float tt = mod(t * t_repeats, 1);
+    float tt = mod(t * t_repeats, 1);   
 
-    // Colours
-    color low = color(0.45, 0.4, 0.33);
-    color high = color(1.0, 0.87, 0.7);
+    // Displace and colour blank canvas
+    resultRGB = color(0.95, 0.95, 0.95);
+    dispOut = height * (float)noise("perlin", P * frequency);
 
-    float noiseOut = height * (float)noise("uperlin", P * frequency);
+/// STIPPLING START
+    float stipRepeats = 2;
+    float stipSS = mod(s * stipRepeats, 1);
+
+    color lineColour = color(0.0, 0.0, 0.0);
+    float lineWidth = 0.001;
     
-    resultRGB = low * high * (abs(noiseOut) + 0.5);
-
-    float line = s - t;
-    float thickness = 0.005;
-
     // Draw line
-    if (abs(line) < thickness || line > 0.5)
+    if (stipSS < lineWidth)
     {
-        resultRGB = color(0.0, 0.0, 0.0);
+        lineColour = color(0.95, 0.95, 0.95);
     }
+    
+    // Incrementally indent line, to create stippled effect
+    float waveLength = 3.141 * 30;
+    color wave = color(sin(waveLength * t));
+    wave *= lineColour;
+
+    dispOut += wave[0] / 150;
+/// STIPPLING END
+
+/// PATTERN START
+// The following part is adapted from:
+// Kesson, M., 2002. OSL Rosette. [online]
+// Available from: https://www.fundza.com/rfm/osl/rosette/index.html
+// Accessed [25 March 2021]
+
+    // Randomly seed number of circles per row
+    // Circles counted on physical object as reference: Small = 18, 9, 0   Medium = 32, 22, 14   Large = 50, 44, 36
+    float circleSeed = (float)noise("cell", s_repeats * s, t_repeats * t);
+
+    if (circleSeed < 0.5)
+    {
+         circleSeed += 0.5;
+    }
+
+    float a = circleSeed * 50;
+    float b = circleSeed * 44;
+    float c = circleSeed * 36;
+    point circlesPerRing = point((int)a, (int)b, (int)c);
+
+    float s_centre = 0.5;
+    float t_centre = 0.5;
+    float radiusOffset = (float)noise("cell", s_repeats * s, t_repeats * t) * 0.2;
+    float circleSize = (15 * outerRadius) + radiusOffset;
+    point stPoint = point(ss, tt, 0);
+    point rotPoint;
+    float rotS;
+    float rotT;
+
+    // Offset centre position of pattern
+    float offsetSeed = (float)noise("cell", s_repeats * s, t_repeats * t) - 0.5;
+
+    // Centre point of circle (to rotate around)
+    point centrePoint = point(s_centre - (offsetSeed * 0.1), t_centre - (offsetSeed * 0.1), 0);
+    point axisPoint = point(s_centre, t_centre, 1);
+
+    // Draw position
+    float sOffset = s_centre - circleSize;
+    float tOffset = t_centre;
+
+    if (distance(centrePoint, point(ss, tt, 0)) > (circleSize + ((rings - 1) * distanceBetweenRows)))
+    {
+        //resultRGB = color(1.0, 0.0, 0.0);
+        float simHeight = 0.5;
+        float simFreq = 5.0;
+        dispOut -= simHeight * (float)noise("usimplex", P * simFreq);
+        resultRGB = color(1.0, 0.0, 0.0);
+    }
+    else
+    {
+        for (int i = 0; i < rings; ++i)
+        {
+            float angle = radians(360 / circlesPerRing[i]);
+            for (int j = 0; j < circlesPerRing[i]; ++j)
+            {
+                // Rotate surface
+                rotPoint = rotate(stPoint, j * angle, centrePoint, axisPoint);
+                rotS = rotPoint[0];
+                rotT = rotPoint[1];
+
+                // Draw circle
+                float dist = distance(point(sOffset, tOffset, 0), point(rotS, rotT, 0));
+                if (dist <= outerRadius && dist >= innerRadius)
+                {
+                    dispOut -= dist;
+                    resultRGB = color(0.0, 0.0, 0.0);
+                }
+            }
+            sOffset -= distanceBetweenRows;
+        }
+    }
+/// PATTERN END
 }
-
-/*
-navajowhite	    #FFDEAD	    rgb(255,222,173)
-wheat	        #F5DEB3	    rgb(245,222,179)
-burlywood	    #DEB887	    rgb(222,184,135)
-tan	            #D2B48C	    rgb(210,180,140)
-
-LOW:    (210, 180, 135)
-HIGH:   (255, 222, 179)
-*/

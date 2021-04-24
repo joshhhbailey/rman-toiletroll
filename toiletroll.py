@@ -55,8 +55,13 @@ def CreateRoll(_height = 1.0, _outerRadius = 1.0, _innerRadius = 0.5, _pattern =
         "sphere" : [1],
         "coordinatesystem" : ["shader"]
     })
+    noiseHeight = random.uniform(0.7, 0.8)
+    noiseFreq = random.randint(70, 80)
     ri.Pattern("tube", "tube",
     {
+        "float height" : [noiseHeight],
+        "int frequency" : [noiseFreq]
+        
     })
     ri.Displace("PxrDisplace", "disp",
     {
@@ -65,10 +70,10 @@ def CreateRoll(_height = 1.0, _outerRadius = 1.0, _innerRadius = 0.5, _pattern =
     ri.Bxdf("PxrSurface", "pattern",
     {
         "reference color diffuseColor" : ["tube:resultRGB"],
-        'int diffuseDoubleSided' : [1],
-        'float subsurfaceGain' : [0.3],
-        'color subsurfaceColor' : [0.001,0.001,0.001],
-        'float diffuseRoughness' : [0.7]
+        "int diffuseDoubleSided" : [1],
+        "float diffuseRoughness" : [1.0],
+        "float fuzzConeAngle" : [8.0],
+        "float fuzzGain" : [1.0]
     })
     ri.Cylinder(_innerRadius, -_height, _height, 360)
     ri.AttributeEnd()
@@ -84,7 +89,6 @@ def CreateRoll(_height = 1.0, _outerRadius = 1.0, _innerRadius = 0.5, _pattern =
     noiseFreq = random.randint(5, 8)
     ri.Pattern(_pattern, _pattern,
     {
-        "point circlesPerRing" : [50, 44, 36],
         "float height" : [noiseHeight],
         "int frequency" : [noiseFreq]
 
@@ -98,10 +102,10 @@ def CreateRoll(_height = 1.0, _outerRadius = 1.0, _innerRadius = 0.5, _pattern =
     ri.Bxdf("PxrSurface", "pattern",
     {
         "reference color diffuseColor" : [colour],
-        'int diffuseDoubleSided' : [1],
-        'float subsurfaceGain' : [0.3],
-        'color subsurfaceColor' : [0.001,0.001,0.001],
-        'float diffuseRoughness' : [0.7]
+        "int diffuseDoubleSided" : [1],
+        "float diffuseRoughness" : [1.0],
+        "float fuzzConeAngle" : [8.0],
+        "float fuzzGain" : [1.0]
     })
     ri.Cylinder(_outerRadius, -_height, _height, 360)
     ri.AttributeEnd()
@@ -127,10 +131,10 @@ def CreateRoll(_height = 1.0, _outerRadius = 1.0, _innerRadius = 0.5, _pattern =
     ri.Bxdf('PxrSurface', 'top',
     {
         'reference color diffuseColor' : ['tissueNoise:resultRGB'],
-        'int diffuseDoubleSided' : [1],
-        'float subsurfaceGain' : [0.3],
-        'color subsurfaceColor' : [0.001,0.001,0.001],
-        'float diffuseRoughness' : [0.7]
+        "int diffuseDoubleSided" : [1],
+        "float diffuseRoughness" : [1.0],
+        "float fuzzConeAngle" : [8.0],
+        "float fuzzGain" : [1.0]
     })
     ri.Hyperboloid([_innerRadius, 0.0, -_height], [_outerRadius, 0.0, -_height], 360)
     ri.Hyperboloid([_innerRadius, 0.0, _height], [_outerRadius, 0.0, _height], 360)
@@ -190,10 +194,14 @@ if __name__ == "__main__":
     ri.Display("toiletroll.exr", "framebuffer", "rgba")       # File, Buffer, Colour Channels
     ri.Format(1024, 1024, 1)                              # Width, Height, Aspect Ratio
 
+    ri.Hider("raytrace", {"int incremental" :[1]})
+    ri.Integrator("PxrPathTracer", "integrator")
+
     # Camera coordinate system
     ri.Projection(ri.PERSPECTIVE)
     ri.Translate(0, -2, 5)
-    ri.Rotate(60, 1, 0, 0)
+    ri.Rotate(70, 1, 0, 0)
+    #ri.Rotate(-10, 0, 0, 1)
 
     # World coordinate system
     ri.WorldBegin()
@@ -206,7 +214,7 @@ if __name__ == "__main__":
     roll_outerRadius = 1.04
     roll_innerRadius = 0.49
     #CreateRoll(roll_height, roll_outerRadius, roll_innerRadius, "tissuePatternCircles")
-    CreateRollPyramid(3, 1.06, 1.04, 0.49, "random")
+    CreateRollPyramid(2, 1.06, 1.04, 0.49, "random")
     ri.AttributeEnd()
     ri.TransformEnd()
 
@@ -230,7 +238,7 @@ if __name__ == "__main__":
     ri.Rotate(-66, 0, 0, 1)
     ri.Light("PxrDomeLight", "EnvMapLight",
     {
-        "float exposure" : [0],
+        "float exposure" : [-0.5],
         # HDRI acquired from:
         # HDRI Haven,. 2021. Lebombo [online]
         # Available from: https://hdrihaven.com/hdri/?c=indoor&h=lebombo

@@ -2,389 +2,510 @@ OpenShadingLanguage 1.00
 # Compiled by oslc 1.8.2.pixar1697a56
 # options: 
 shader tissuePatternCircles
-param	float	s	0		%meta{int,lockgeom,0}  %read{1,19} %write{2147483647,-1}
-param	float	t	0		%meta{int,lockgeom,0}  %read{7,31} %write{2147483647,-1}
-param	float	s_repeats	8		%read{1,1} %write{2147483647,-1}
-param	float	t_repeats	3		%read{7,7} %write{2147483647,-1}
-param	float	innerRadius	0		%read{119,119} %write{2147483647,-1}
-param	float	outerRadius	0.0099999998		%read{0,116} %write{2147483647,-1}
-param	int	ringsPerCircle	3		%read{48,48} %write{2147483647,-1}
-param	point	circlesPerRing	18 9 0		%read{49,56} %write{2147483647,-1}
-param	float	distanceBetweenRows	0		%read{48,127} %write{0,0} %initexpr
-param	float	height	0.0049999999		%read{17,17} %write{2147483647,-1}
-param	int	frequency	5		%read{14,14} %write{2147483647,-1}
-oparam	color	resultRGB	0 0 0		%read{2147483647,-1} %write{13,13}
-oparam	float	dispOut	0		%read{37,127} %write{17,127}
-global	point	P	%read{15,15} %write{2147483647,-1}
-local	vector	___252_axis	%read{48,127} %write{48,127}
-local	float	___252_cosang	%read{48,127} %write{48,127}
-local	float	___252_sinang	%read{48,127} %write{48,127}
-local	float	___252_cosang1	%read{48,127} %write{48,127}
-local	float	___252_x	%read{48,127} %write{48,127}
-local	float	___252_y	%read{48,127} %write{48,127}
-local	float	___252_z	%read{48,127} %write{48,127}
-local	matrix	___252_M	%read{48,127} %write{48,127}
-local	float	ss	%read{41,41} %write{6,6}
-local	float	tt	%read{41,41} %write{12,12}
-local	float	stipRepeats	%read{19,19} %write{18,18}
-local	float	stipSS	%read{27,27} %write{24,24}
-local	color	lineColour	%read{34,34} %write{25,29}
-local	float	lineWidth	%read{27,27} %write{26,26}
-local	float	waveLength	%read{31,31} %write{30,30}
-local	color	wave	%read{34,35} %write{33,34}
-local	float	s_centre	%read{42,44} %write{38,38}
-local	float	t_centre	%read{42,128} %write{39,128}
-local	float	circleSize	%read{44,44} %write{40,40}
-local	point	stPoint	%read{48,127} %write{41,41}
-local	point	rotPoint	%read{48,127} %write{48,127}
-local	float	rotS	%read{48,127} %write{48,127}
-local	float	rotT	%read{48,127} %write{48,127}
-local	point	centrePoint	%read{48,127} %write{42,42}
-local	point	axisPoint	%read{48,127} %write{43,43}
-local	float	sOffset	%read{48,127} %write{44,127}
-local	float	tOffset	%read{48,127} %write{45,45}
-local	int	___325_i	%read{48,127} %write{47,127}
-local	float	___326_angle	%read{48,127} %write{48,127}
-local	int	___327_j	%read{48,127} %write{48,127}
-local	float	___328_dist	%read{48,127} %write{48,127}
-const	float	$const2	5		%read{0,0} %write{2147483647,-1}
-temp	float	$tmp1	%read{3,6} %write{1,1}
-const	int	$const3	1		%read{66,127} %write{2147483647,-1}
-const	float	$const4	1		%read{3,107} %write{2147483647,-1}
-const	string	$const5	"mod"		%read{2,20} %write{2147483647,-1}
-temp	float	$tmp2	%read{5,5} %write{4,4}
-temp	float	$tmp3	%read{4,4} %write{3,3}
-temp	float	$tmp4	%read{6,6} %write{5,5}
-temp	float	$tmp5	%read{9,12} %write{7,7}
-temp	float	$tmp6	%read{11,11} %write{10,10}
-temp	float	$tmp7	%read{10,10} %write{9,9}
-temp	float	$tmp8	%read{12,12} %write{11,11}
-const	color	$const6	0.94999999 0.94999999 0.94999999		%read{13,29} %write{2147483647,-1}
-temp	float	$tmp9	%read{17,17} %write{16,16}
-const	string	$const7	"perlin"		%read{16,16} %write{2147483647,-1}
-temp	point	$tmp10	%read{16,16} %write{15,15}
-temp	point	$tmp11	%read{15,15} %write{14,14}
-const	int	$const8	2		%read{18,67} %write{2147483647,-1}
-temp	float	$tmp12	%read{21,24} %write{19,19}
-temp	float	$tmp13	%read{23,23} %write{22,22}
-temp	float	$tmp14	%read{22,22} %write{21,21}
-temp	float	$tmp15	%read{24,24} %write{23,23}
-const	color	$const9	0 0 0		%read{25,25} %write{2147483647,-1}
-const	float	$const10	0.001		%read{26,26} %write{2147483647,-1}
-temp	int	$tmp16	%read{28,28} %write{27,27}
-const	float	$const11	3.141		%read{30,30} %write{2147483647,-1}
-const	float	$const13	30		%read{30,30} %write{2147483647,-1}
-temp	float	$tmp17	%read{33,33} %write{32,32}
-temp	float	$tmp18	%read{32,32} %write{31,31}
-const	int	$const14	0		%read{35,120} %write{2147483647,-1}
-temp	float	$tmp19	%read{36,36} %write{35,35}
-temp	float	$tmp20	%read{37,37} %write{36,36}
-const	float	$const16	150		%read{36,36} %write{2147483647,-1}
-const	float	$const17	0.5		%read{38,128} %write{2147483647,-1}
-const	float	$const19	25		%read{40,40} %write{2147483647,-1}
-const	float	$const20	0		%read{41,114} %write{2147483647,-1}
-temp	int	$tmp21	%read{46,127} %write{47,127}
-temp	float	$tmp22	%read{48,127} %write{48,127}
-temp	float	$tmp23	%read{48,127} %write{48,127}
-const	float	$const22	360		%read{50,50} %write{2147483647,-1}
-const	string	$const23	"radians"		%read{51,51} %write{2147483647,-1}
-const	float	$const24	3.1415927		%read{52,52} %write{2147483647,-1}
-const	float	$const25	180		%read{52,52} %write{2147483647,-1}
-temp	float	$tmp24	%read{48,127} %write{48,127}
-temp	float	$tmp25	%read{48,127} %write{48,127}
-temp	int	$tmp26	%read{48,127} %write{48,127}
-temp	float	$tmp27	%read{48,127} %write{48,127}
-temp	float	$tmp28	%read{48,127} %write{48,127}
-const	string	$const26	"rotate"		%read{60,60} %write{2147483647,-1}
-temp	vector	$tmp29	%read{48,127} %write{48,127}
-temp	float	$tmp30	%read{48,127} %write{48,127}
-temp	float	$tmp31	%read{48,127} %write{48,127}
-temp	float	$tmp32	%read{48,127} %write{48,127}
-temp	float	$tmp33	%read{48,127} %write{48,127}
-temp	float	$tmp34	%read{48,127} %write{48,127}
-temp	float	$tmp35	%read{48,127} %write{48,127}
-temp	float	$tmp36	%read{48,127} %write{48,127}
-temp	float	$tmp37	%read{48,127} %write{48,127}
-temp	float	$tmp38	%read{48,127} %write{48,127}
-temp	float	$tmp39	%read{48,127} %write{48,127}
-temp	float	$tmp40	%read{48,127} %write{48,127}
-temp	float	$tmp41	%read{48,127} %write{48,127}
-temp	float	$tmp42	%read{48,127} %write{48,127}
-temp	float	$tmp43	%read{48,127} %write{48,127}
-temp	float	$tmp44	%read{48,127} %write{48,127}
-temp	float	$tmp45	%read{48,127} %write{48,127}
-temp	float	$tmp46	%read{48,127} %write{48,127}
-temp	float	$tmp47	%read{48,127} %write{48,127}
-temp	float	$tmp48	%read{48,127} %write{48,127}
-temp	float	$tmp49	%read{48,127} %write{48,127}
-temp	float	$tmp50	%read{48,127} %write{48,127}
-temp	float	$tmp51	%read{48,127} %write{48,127}
-temp	float	$tmp52	%read{48,127} %write{48,127}
-temp	float	$tmp53	%read{48,127} %write{48,127}
-temp	float	$tmp54	%read{48,127} %write{48,127}
-temp	float	$tmp55	%read{48,127} %write{48,127}
-temp	float	$tmp56	%read{48,127} %write{48,127}
-temp	float	$tmp57	%read{48,127} %write{48,127}
-temp	float	$tmp58	%read{48,127} %write{48,127}
-temp	float	$tmp59	%read{48,127} %write{48,127}
-temp	float	$tmp60	%read{48,127} %write{48,127}
-temp	float	$tmp61	%read{48,127} %write{48,127}
-temp	float	$tmp62	%read{48,127} %write{48,127}
-temp	float	$tmp63	%read{48,127} %write{48,127}
-temp	float	$tmp64	%read{48,127} %write{48,127}
-temp	float	$tmp65	%read{48,127} %write{48,127}
-temp	float	$tmp66	%read{48,127} %write{48,127}
-temp	float	$tmp67	%read{48,127} %write{48,127}
-temp	float	$tmp68	%read{48,127} %write{48,127}
-temp	vector	$tmp69	%read{48,127} %write{48,127}
-temp	vector	$tmp70	%read{48,127} %write{48,127}
-temp	point	$tmp71	%read{48,127} %write{48,127}
-temp	point	$tmp72	%read{48,127} %write{48,127}
-temp	int	$tmp73	%read{48,127} %write{48,127}
-temp	int	$tmp74	%read{48,127} %write{48,127}
-temp	int	$tmp75	%read{48,127} %write{48,127}
-temp	int	$tmp76	%read{48,127} %write{48,127}
-temp	float	$tmp77	%read{48,127} %write{48,127}
-const	float	$const27	2		%read{123,123} %write{2147483647,-1}
-code distanceBetweenRows
-# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:17
-# 
-	mul		distanceBetweenRows outerRadius $const2 	%filename{"C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl"} %line{17} %argrw{"wrr"}
+param	float	s	0		%meta{int,lockgeom,0}  %read{2,68} %write{2147483647,-1}
+param	float	t	0		%meta{int,lockgeom,0}  %read{8,69} %write{2147483647,-1}
+param	float	simHeight	0.0035000001		%read{91,91} %write{2147483647,-1}
+param	int	simFreq	60		%read{88,88} %write{2147483647,-1}
+param	float	height	0.0049999999		%read{22,22} %write{2147483647,-1}
+param	int	frequency	5		%read{19,19} %write{2147483647,-1}
+oparam	color	resultRGB	0 0 0		%read{2147483647,-1} %write{18,18}
+oparam	float	dispOut	0		%read{42,173} %write{22,173}
+global	point	P	%read{20,89} %write{2147483647,-1}
+local	vector	___252_axis	%read{95,173} %write{95,173}
+local	float	___252_cosang	%read{95,173} %write{95,173}
+local	float	___252_sinang	%read{95,173} %write{95,173}
+local	float	___252_cosang1	%read{95,173} %write{95,173}
+local	float	___252_x	%read{95,173} %write{95,173}
+local	float	___252_y	%read{95,173} %write{95,173}
+local	float	___252_z	%read{95,173} %write{95,173}
+local	matrix	___252_M	%read{95,173} %write{95,173}
+local	float	s_repeats	%read{2,68} %write{0,0}
+local	float	t_repeats	%read{8,69} %write{1,1}
+local	float	ss	%read{67,80} %write{7,7}
+local	float	tt	%read{67,80} %write{13,13}
+local	float	innerRadius	%read{95,173} %write{14,14}
+local	float	outerRadius	%read{17,173} %write{15,15}
+local	int	rings	%read{82,173} %write{16,16}
+local	float	distanceBetweenRows	%read{84,173} %write{17,17}
+local	float	stipRepeats	%read{24,24} %write{23,23}
+local	float	stipSS	%read{32,32} %write{29,29}
+local	color	lineColour	%read{39,39} %write{30,34}
+local	float	lineWidth	%read{32,32} %write{31,31}
+local	float	waveLength	%read{36,36} %write{35,35}
+local	color	wave	%read{39,40} %write{38,39}
+local	float	circleSeed	%read{46,51} %write{45,48}
+local	float	a	%read{52,52} %write{49,49}
+local	float	b	%read{54,54} %write{50,50}
+local	float	c	%read{56,56} %write{51,51}
+local	point	circlesPerRing	%read{95,173} %write{58,58}
+local	float	s_centre	%read{73,78} %write{59,59}
+local	float	t_centre	%read{75,79} %write{60,60}
+local	float	radiusOffset	%read{66,66} %write{64,64}
+local	float	circleSize	%read{78,85} %write{66,66}
+local	point	stPoint	%read{95,173} %write{67,67}
+local	point	rotPoint	%read{95,173} %write{95,173}
+local	float	rotS	%read{95,173} %write{95,173}
+local	float	rotT	%read{95,173} %write{95,173}
+local	float	offsetSeed	%read{72,74} %write{71,71}
+local	point	centrePoint	%read{81,173} %write{76,76}
+local	point	axisPoint	%read{95,173} %write{77,77}
+local	float	sOffset	%read{95,173} %write{78,173}
+local	float	tOffset	%read{95,173} %write{79,79}
+local	int	___328_i	%read{95,173} %write{94,173}
+local	float	___329_angle	%read{95,173} %write{95,173}
+local	int	___330_j	%read{95,173} %write{95,173}
+local	float	___331_dist	%read{95,173} %write{95,173}
+const	int	$const1	8		%read{0,0} %write{2147483647,-1}
+const	int	$const2	3		%read{1,16} %write{2147483647,-1}
+temp	float	$tmp1	%read{4,7} %write{2,2}
+const	int	$const3	1		%read{82,173} %write{2147483647,-1}
+const	float	$const4	1		%read{4,154} %write{2147483647,-1}
+const	string	$const5	"mod"		%read{3,25} %write{2147483647,-1}
+temp	float	$tmp2	%read{6,6} %write{5,5}
+temp	float	$tmp3	%read{5,5} %write{4,4}
+temp	float	$tmp4	%read{7,7} %write{6,6}
+temp	float	$tmp5	%read{10,13} %write{8,8}
+temp	float	$tmp6	%read{12,12} %write{11,11}
+temp	float	$tmp7	%read{11,11} %write{10,10}
+temp	float	$tmp8	%read{13,13} %write{12,12}
+const	float	$const6	0		%read{14,161} %write{2147483647,-1}
+const	float	$const7	0.0099999998		%read{15,15} %write{2147483647,-1}
+const	float	$const9	5		%read{17,17} %write{2147483647,-1}
+const	color	$const10	0.94999999 0.94999999 0.94999999		%read{18,34} %write{2147483647,-1}
+temp	float	$tmp9	%read{22,22} %write{21,21}
+const	string	$const11	"perlin"		%read{21,21} %write{2147483647,-1}
+temp	point	$tmp10	%read{21,21} %write{20,20}
+temp	point	$tmp11	%read{20,20} %write{19,19}
+const	int	$const12	2		%read{23,114} %write{2147483647,-1}
+temp	float	$tmp12	%read{26,29} %write{24,24}
+temp	float	$tmp13	%read{28,28} %write{27,27}
+temp	float	$tmp14	%read{27,27} %write{26,26}
+temp	float	$tmp15	%read{29,29} %write{28,28}
+const	color	$const13	0 0 0		%read{30,30} %write{2147483647,-1}
+const	float	$const14	0.001		%read{31,31} %write{2147483647,-1}
+temp	int	$tmp16	%read{33,33} %write{32,32}
+const	float	$const15	3.141		%read{35,35} %write{2147483647,-1}
+const	float	$const17	30		%read{35,35} %write{2147483647,-1}
+temp	float	$tmp17	%read{38,38} %write{37,37}
+temp	float	$tmp18	%read{37,37} %write{36,36}
+const	int	$const18	0		%read{40,167} %write{2147483647,-1}
+temp	float	$tmp19	%read{41,41} %write{40,40}
+temp	float	$tmp20	%read{42,42} %write{41,41}
+const	float	$const20	150		%read{41,41} %write{2147483647,-1}
+const	string	$const21	"cell"		%read{45,70} %write{2147483647,-1}
+temp	float	$tmp21	%read{45,45} %write{43,43}
+temp	float	$tmp22	%read{45,45} %write{44,44}
+const	float	$const22	0.5		%read{46,71} %write{2147483647,-1}
+temp	int	$tmp23	%read{47,47} %write{46,46}
+const	float	$const24	50		%read{49,49} %write{2147483647,-1}
+const	float	$const26	44		%read{50,50} %write{2147483647,-1}
+const	float	$const28	36		%read{51,51} %write{2147483647,-1}
+temp	int	$tmp24	%read{53,53} %write{52,52}
+temp	float	$tmp25	%read{58,58} %write{53,53}
+temp	int	$tmp26	%read{55,55} %write{54,54}
+temp	float	$tmp27	%read{58,58} %write{55,55}
+temp	int	$tmp28	%read{57,57} %write{56,56}
+temp	float	$tmp29	%read{58,58} %write{57,57}
+temp	float	$tmp30	%read{64,64} %write{63,63}
+temp	float	$tmp31	%read{63,63} %write{61,61}
+temp	float	$tmp32	%read{63,63} %write{62,62}
+const	float	$const29	0.2		%read{64,64} %write{2147483647,-1}
+temp	float	$tmp33	%read{66,66} %write{65,65}
+const	float	$const31	15		%read{65,65} %write{2147483647,-1}
+temp	float	$tmp34	%read{71,71} %write{70,70}
+temp	float	$tmp35	%read{70,70} %write{68,68}
+temp	float	$tmp36	%read{70,70} %write{69,69}
+const	float	$const32	0.1		%read{72,74} %write{2147483647,-1}
+temp	float	$tmp37	%read{73,73} %write{72,72}
+temp	float	$tmp38	%read{76,76} %write{73,73}
+temp	float	$tmp39	%read{75,75} %write{74,74}
+temp	float	$tmp40	%read{76,76} %write{75,75}
+temp	float	$tmp41	%read{86,86} %write{81,81}
+temp	point	$tmp42	%read{81,81} %write{80,80}
+temp	int	$tmp43	%read{83,83} %write{82,82}
+temp	float	$tmp44	%read{85,85} %write{84,84}
+temp	float	$tmp45	%read{84,84} %write{83,83}
+temp	float	$tmp46	%read{86,86} %write{85,85}
+temp	int	$tmp47	%read{87,87} %write{86,86}
+temp	float	$tmp48	%read{91,91} %write{90,90}
+const	string	$const33	"usimplex"		%read{90,90} %write{2147483647,-1}
+temp	point	$tmp49	%read{90,90} %write{89,89}
+temp	point	$tmp50	%read{89,89} %write{88,88}
+temp	float	$tmp51	%read{92,92} %write{91,91}
+temp	int	$tmp52	%read{93,173} %write{94,173}
+temp	float	$tmp53	%read{95,173} %write{95,173}
+temp	float	$tmp54	%read{95,173} %write{95,173}
+const	float	$const35	360		%read{97,97} %write{2147483647,-1}
+const	string	$const36	"radians"		%read{98,98} %write{2147483647,-1}
+const	float	$const37	3.1415927		%read{99,99} %write{2147483647,-1}
+const	float	$const38	180		%read{99,99} %write{2147483647,-1}
+temp	float	$tmp55	%read{95,173} %write{95,173}
+temp	float	$tmp56	%read{95,173} %write{95,173}
+temp	int	$tmp57	%read{95,173} %write{95,173}
+temp	float	$tmp58	%read{95,173} %write{95,173}
+temp	float	$tmp59	%read{95,173} %write{95,173}
+const	string	$const39	"rotate"		%read{107,107} %write{2147483647,-1}
+temp	vector	$tmp60	%read{95,173} %write{95,173}
+temp	float	$tmp61	%read{95,173} %write{95,173}
+temp	float	$tmp62	%read{95,173} %write{95,173}
+temp	float	$tmp63	%read{95,173} %write{95,173}
+temp	float	$tmp64	%read{95,173} %write{95,173}
+temp	float	$tmp65	%read{95,173} %write{95,173}
+temp	float	$tmp66	%read{95,173} %write{95,173}
+temp	float	$tmp67	%read{95,173} %write{95,173}
+temp	float	$tmp68	%read{95,173} %write{95,173}
+temp	float	$tmp69	%read{95,173} %write{95,173}
+temp	float	$tmp70	%read{95,173} %write{95,173}
+temp	float	$tmp71	%read{95,173} %write{95,173}
+temp	float	$tmp72	%read{95,173} %write{95,173}
+temp	float	$tmp73	%read{95,173} %write{95,173}
+temp	float	$tmp74	%read{95,173} %write{95,173}
+temp	float	$tmp75	%read{95,173} %write{95,173}
+temp	float	$tmp76	%read{95,173} %write{95,173}
+temp	float	$tmp77	%read{95,173} %write{95,173}
+temp	float	$tmp78	%read{95,173} %write{95,173}
+temp	float	$tmp79	%read{95,173} %write{95,173}
+temp	float	$tmp80	%read{95,173} %write{95,173}
+temp	float	$tmp81	%read{95,173} %write{95,173}
+temp	float	$tmp82	%read{95,173} %write{95,173}
+temp	float	$tmp83	%read{95,173} %write{95,173}
+temp	float	$tmp84	%read{95,173} %write{95,173}
+temp	float	$tmp85	%read{95,173} %write{95,173}
+temp	float	$tmp86	%read{95,173} %write{95,173}
+temp	float	$tmp87	%read{95,173} %write{95,173}
+temp	float	$tmp88	%read{95,173} %write{95,173}
+temp	float	$tmp89	%read{95,173} %write{95,173}
+temp	float	$tmp90	%read{95,173} %write{95,173}
+temp	float	$tmp91	%read{95,173} %write{95,173}
+temp	float	$tmp92	%read{95,173} %write{95,173}
+temp	float	$tmp93	%read{95,173} %write{95,173}
+temp	float	$tmp94	%read{95,173} %write{95,173}
+temp	float	$tmp95	%read{95,173} %write{95,173}
+temp	float	$tmp96	%read{95,173} %write{95,173}
+temp	float	$tmp97	%read{95,173} %write{95,173}
+temp	float	$tmp98	%read{95,173} %write{95,173}
+temp	float	$tmp99	%read{95,173} %write{95,173}
+temp	vector	$tmp100	%read{95,173} %write{95,173}
+temp	vector	$tmp101	%read{95,173} %write{95,173}
+temp	point	$tmp102	%read{95,173} %write{95,173}
+temp	point	$tmp103	%read{95,173} %write{95,173}
+temp	int	$tmp104	%read{95,173} %write{95,173}
+temp	int	$tmp105	%read{95,173} %write{95,173}
+temp	int	$tmp106	%read{95,173} %write{95,173}
+temp	int	$tmp107	%read{95,173} %write{95,173}
 code ___main___
-# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:27
-#     float tt = mod(t * t_repeats, 1);   
-	mul		$tmp1 s s_repeats 	%filename{"C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl"} %line{27} %argrw{"wrr"}
-	functioncall	$const5 7 	%argrw{"r"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:19
+#     float t_repeats = 3;
+	assign		s_repeats $const1 	%filename{"C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl"} %line{19} %argrw{"wr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:20
+#     float ss = mod(s * s_repeats, 1);
+	assign		t_repeats $const2 	%line{20} %argrw{"wr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:21
+#     float tt = mod(t * t_repeats, 1);
+	mul		$tmp1 s s_repeats 	%line{21} %argrw{"wrr"}
+	functioncall	$const5 8 	%argrw{"r"}
 # C:/Program Files\\Pixar\\RenderManProServer-23.5\\lib\\osl\\include\\stdosl.h:136
-# PERCOMP1 (log2)
+# float hypot (float a, float b, float c) { return sqrt (a*a + b*b + c*c); }
 	div		$tmp3 $tmp1 $const4 	%filename{"C:/Program Files\\Pixar\\RenderManProServer-23.5\\lib\\osl\\include\\stdosl.h"} %line{136} %argrw{"wrr"}
 	floor		$tmp2 $tmp3 	%argrw{"wr"}
 	mul		$tmp4 $const4 $tmp2 	%argrw{"wrr"}
 	sub		ss $tmp1 $tmp4 	%argrw{"wrr"}
-# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:28
-# 
-	mul		$tmp5 t t_repeats 	%filename{"C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl"} %line{28} %argrw{"wrr"}
-	functioncall	$const5 13 	%argrw{"r"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:22
+#     
+	mul		$tmp5 t t_repeats 	%filename{"C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl"} %line{22} %argrw{"wrr"}
+	functioncall	$const5 14 	%argrw{"r"}
 # C:/Program Files\\Pixar\\RenderManProServer-23.5\\lib\\osl\\include\\stdosl.h:136
-# float  log (float a,  float b) { return log(a)/log(b); }
+# float hypot (float a, float b) { return sqrt (a*a + b*b); }
 	div		$tmp7 $tmp5 $const4 	%filename{"C:/Program Files\\Pixar\\RenderManProServer-23.5\\lib\\osl\\include\\stdosl.h"} %line{136} %argrw{"wrr"}
 	floor		$tmp6 $tmp7 	%argrw{"wr"}
 	mul		$tmp8 $const4 $tmp6 	%argrw{"wrr"}
 	sub		tt $tmp5 $tmp8 	%argrw{"wrr"}
-# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:31
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:25
+#     float outerRadius = 0.010;
+	assign		innerRadius $const6 	%filename{"C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl"} %line{25} %argrw{"wr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:26
+# 
+	assign		outerRadius $const7 	%line{26} %argrw{"wr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:29
+#     float distanceBetweenRows = outerRadius * 5;
+	assign		rings $const2 	%line{29} %argrw{"wr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:30
+# 
+	mul		distanceBetweenRows outerRadius $const9 	%line{30} %argrw{"wrr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:33
 #     dispOut = height * (float)noise("perlin", P * frequency);
-	assign		resultRGB $const6 	%filename{"C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl"} %line{31} %argrw{"wr"}
-# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:32
+	assign		resultRGB $const10 	%line{33} %argrw{"wr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:34
 # 
-	assign		$tmp11 frequency 	%line{32} %argrw{"wr"}
+	assign		$tmp11 frequency 	%line{34} %argrw{"wr"}
 	mul		$tmp10 P $tmp11 	%argrw{"wrr"}
-	noise		$tmp9 $const7 $tmp10 	%argrw{"wrr"}
+	noise		$tmp9 $const11 $tmp10 	%argrw{"wrr"}
 	mul		dispOut height $tmp9 	%argrw{"wrr"}
-# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:35
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:37
 #     float stipSS = mod(s * stipRepeats, 1);
-	assign		stipRepeats $const8 	%line{35} %argrw{"wr"}
-# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:36
+	assign		stipRepeats $const12 	%line{37} %argrw{"wr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:38
 # 
-	mul		$tmp12 s stipRepeats 	%line{36} %argrw{"wrr"}
-	functioncall	$const5 25 	%argrw{"r"}
+	mul		$tmp12 s stipRepeats 	%line{38} %argrw{"wrr"}
+	functioncall	$const5 30 	%argrw{"r"}
 # C:/Program Files\\Pixar\\RenderManProServer-23.5\\lib\\osl\\include\\stdosl.h:136
-# PERCOMP2 (pow)
+# PERCOMP1 (tanh)
 	div		$tmp14 $tmp12 $const4 	%filename{"C:/Program Files\\Pixar\\RenderManProServer-23.5\\lib\\osl\\include\\stdosl.h"} %line{136} %argrw{"wrr"}
 	floor		$tmp13 $tmp14 	%argrw{"wr"}
 	mul		$tmp15 $const4 $tmp13 	%argrw{"wrr"}
 	sub		stipSS $tmp12 $tmp15 	%argrw{"wrr"}
-# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:38
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:40
 #     float lineWidth = 0.001;
-	assign		lineColour $const9 	%filename{"C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl"} %line{38} %argrw{"wr"}
-# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:39
+	assign		lineColour $const13 	%filename{"C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl"} %line{40} %argrw{"wr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:41
 #     
-	assign		lineWidth $const10 	%line{39} %argrw{"wr"}
-# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:42
-#     {
-	lt		$tmp16 stipSS lineWidth 	%line{42} %argrw{"wrr"}
-	if		$tmp16 30 30 	%argrw{"r"}
+	assign		lineWidth $const14 	%line{41} %argrw{"wr"}
 # C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:44
+#     {
+	lt		$tmp16 stipSS lineWidth 	%line{44} %argrw{"wrr"}
+	if		$tmp16 35 35 	%argrw{"r"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:46
 #     }
-	assign		lineColour $const6 	%line{44} %argrw{"wr"}
-# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:48
+	assign		lineColour $const10 	%line{46} %argrw{"wr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:50
 #     color wave = color(sin(waveLength * t));
-	mul		waveLength $const11 $const13 	%line{48} %argrw{"wrr"}
-# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:49
+	mul		waveLength $const15 $const17 	%line{50} %argrw{"wrr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:51
 #     wave *= lineColour;
-	mul		$tmp18 waveLength t 	%line{49} %argrw{"wrr"}
+	mul		$tmp18 waveLength t 	%line{51} %argrw{"wrr"}
 	sin		$tmp17 $tmp18 	%argrw{"wr"}
 	assign		wave $tmp17 	%argrw{"wr"}
-# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:50
-# 
-	mul		wave wave lineColour 	%line{50} %argrw{"wrr"}
 # C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:52
+# 
+	mul		wave wave lineColour 	%line{52} %argrw{"wrr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:54
 # /// STIPPLING END
-	compref		$tmp19 wave $const14 	%line{52} %argrw{"wrr"}
-	div		$tmp20 $tmp19 $const16 	%argrw{"wrr"}
+	compref		$tmp19 wave $const18 	%line{54} %argrw{"wrr"}
+	div		$tmp20 $tmp19 $const20 	%argrw{"wrr"}
 	add		dispOut dispOut $tmp20 	%argrw{"wrr"}
-# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:61
-#     float t_centre = 0.5;
-	assign		s_centre $const17 	%line{61} %argrw{"wr"}
-# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:62
-# 
-	assign		t_centre $const17 	%line{62} %argrw{"wr"}
-# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:64
-#     point stPoint = point(ss, tt, 0);
-	mul		circleSize $const19 outerRadius 	%line{64} %argrw{"wrr"}
 # C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:65
-#     point rotPoint;
-	point		stPoint ss tt $const20 	%line{65} %argrw{"wrrr"}
-# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:71
-#     point axisPoint = point(s_centre, t_centre, 1);
-	point		centrePoint s_centre t_centre $const20 	%line{71} %argrw{"wrrr"}
-# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:72
 # 
-	point		axisPoint s_centre t_centre $const4 	%line{72} %argrw{"wrrr"}
-# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:75
-#     float tOffset = t_centre;
-	sub		sOffset s_centre circleSize 	%line{75} %argrw{"wrr"}
-# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:76
-# 
-	assign		tOffset t_centre 	%line{76} %argrw{"wr"}
-# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:78
+	mul		$tmp21 s_repeats s 	%line{65} %argrw{"wrr"}
+	mul		$tmp22 t_repeats t 	%argrw{"wrr"}
+	noise		circleSeed $const21 $tmp21 $tmp22 	%argrw{"wrrr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:67
 #     {
-	for		$tmp21 48 49 127 128 	%line{78} %argrw{"r"}
-	assign		___325_i $const14 	%argrw{"wr"}
-	lt		$tmp21 ___325_i ringsPerCircle 	%argrw{"wrr"}
+	lt		$tmp23 circleSeed $const22 	%line{67} %argrw{"wrr"}
+	if		$tmp23 49 49 	%argrw{"r"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:69
+#     }
+	add		circleSeed circleSeed $const22 	%line{69} %argrw{"wrr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:72
+#     float b = circleSeed * 44;
+	mul		a circleSeed $const24 	%line{72} %argrw{"wrr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:73
+#     float c = circleSeed * 36;
+	mul		b circleSeed $const26 	%line{73} %argrw{"wrr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:74
+#     point circlesPerRing = point((int)a, (int)b, (int)c);
+	mul		c circleSeed $const28 	%line{74} %argrw{"wrr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:75
+# 
+	assign		$tmp24 a 	%line{75} %argrw{"wr"}
+	assign		$tmp25 $tmp24 	%argrw{"wr"}
+	assign		$tmp26 b 	%argrw{"wr"}
+	assign		$tmp27 $tmp26 	%argrw{"wr"}
+	assign		$tmp28 c 	%argrw{"wr"}
+	assign		$tmp29 $tmp28 	%argrw{"wr"}
+	point		circlesPerRing $tmp25 $tmp27 $tmp29 	%argrw{"wrrr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:77
+#     float t_centre = 0.5;
+	assign		s_centre $const22 	%line{77} %argrw{"wr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:78
+#     float radiusOffset = (float)noise("cell", s_repeats * s, t_repeats * t) * 0.2;
+	assign		t_centre $const22 	%line{78} %argrw{"wr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:79
+#     float circleSize = (15 * outerRadius) + radiusOffset;
+	mul		$tmp31 s_repeats s 	%line{79} %argrw{"wrr"}
+	mul		$tmp32 t_repeats t 	%argrw{"wrr"}
+	noise		$tmp30 $const21 $tmp31 $tmp32 	%argrw{"wrrr"}
+	mul		radiusOffset $tmp30 $const29 	%argrw{"wrr"}
 # C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:80
-#         for (int j = 0; j < circlesPerRing[i]; ++j) {
-	compref		$tmp22 circlesPerRing ___325_i 	%line{80} %argrw{"wrr"}
-	div		$tmp23 $const22 $tmp22 	%argrw{"wrr"}
-	functioncall	$const23 54 	%argrw{"r"}
-# C:/Program Files\\Pixar\\RenderManProServer-23.5\\lib\\osl\\include\\stdosl.h:88
-# //   notice, this list of conditions and the following disclaimer.
-	div		$tmp24 $const24 $const25 	%filename{"C:/Program Files\\Pixar\\RenderManProServer-23.5\\lib\\osl\\include\\stdosl.h"} %line{88} %argrw{"wrr"}
-	mul		___326_angle $tmp23 $tmp24 	%argrw{"wrr"}
+#     point stPoint = point(ss, tt, 0);
+	mul		$tmp33 $const31 outerRadius 	%line{80} %argrw{"wrr"}
+	add		circleSize $tmp33 radiusOffset 	%argrw{"wrr"}
 # C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:81
-#             // Rotate surface
-	for		$tmp26 56 58 125 126 	%filename{"C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl"} %line{81} %argrw{"r"}
-	assign		___327_j $const14 	%argrw{"wr"}
-	compref		$tmp25 circlesPerRing ___325_i 	%argrw{"wrr"}
-	lt		$tmp26 ___327_j $tmp25 	%argrw{"wrr"}
-# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:83
-#             rotS = rotPoint[0];
-	assign		$tmp28 ___327_j 	%line{83} %argrw{"wr"}
-	mul		$tmp27 $tmp28 ___326_angle 	%argrw{"wrr"}
-	functioncall	$const26 111 	%argrw{"r"}
+#     point rotPoint;
+	point		stPoint ss tt $const6 	%line{81} %argrw{"wrrr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:87
+# 
+	mul		$tmp35 s_repeats s 	%line{87} %argrw{"wrr"}
+	mul		$tmp36 t_repeats t 	%argrw{"wrr"}
+	noise		$tmp34 $const21 $tmp35 $tmp36 	%argrw{"wrrr"}
+	sub		offsetSeed $tmp34 $const22 	%argrw{"wrr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:90
+#     point axisPoint = point(s_centre, t_centre, 1);
+	mul		$tmp37 offsetSeed $const32 	%line{90} %argrw{"wrr"}
+	sub		$tmp38 s_centre $tmp37 	%argrw{"wrr"}
+	mul		$tmp39 offsetSeed $const32 	%argrw{"wrr"}
+	sub		$tmp40 t_centre $tmp39 	%argrw{"wrr"}
+	point		centrePoint $tmp38 $tmp40 $const6 	%argrw{"wrrr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:91
+# 
+	point		axisPoint s_centre t_centre $const4 	%line{91} %argrw{"wrrr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:94
+#     float tOffset = t_centre;
+	sub		sOffset s_centre circleSize 	%line{94} %argrw{"wrr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:95
+# 
+	assign		tOffset t_centre 	%line{95} %argrw{"wr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:98
+#     {
+	point		$tmp42 ss tt $const6 	%line{98} %argrw{"wrrr"}
+	distance	$tmp41 centrePoint $tmp42 	%argrw{"wrr"}
+	sub		$tmp43 rings $const3 	%argrw{"wrr"}
+	assign		$tmp45 $tmp43 	%argrw{"wr"}
+	mul		$tmp44 $tmp45 distanceBetweenRows 	%argrw{"wrr"}
+	add		$tmp46 circleSize $tmp44 	%argrw{"wrr"}
+	gt		$tmp47 $tmp41 $tmp46 	%argrw{"wrr"}
+	if		$tmp47 93 174 	%argrw{"r"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:100
+#     }
+	assign		$tmp50 simFreq 	%line{100} %argrw{"wr"}
+	mul		$tmp49 P $tmp50 	%argrw{"wrr"}
+	noise		$tmp48 $const33 $tmp49 	%argrw{"wrr"}
+	mul		$tmp51 simHeight $tmp48 	%argrw{"wrr"}
+	sub		dispOut dispOut $tmp51 	%argrw{"wrr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:105
+#         {
+	for		$tmp52 95 96 173 174 	%line{105} %argrw{"r"}
+	assign		___328_i $const18 	%argrw{"wr"}
+	lt		$tmp52 ___328_i rings 	%argrw{"wrr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:107
+#             for (int j = 0; j < circlesPerRing[i]; ++j)
+	compref		$tmp53 circlesPerRing ___328_i 	%line{107} %argrw{"wrr"}
+	div		$tmp54 $const35 $tmp53 	%argrw{"wrr"}
+	functioncall	$const36 101 	%argrw{"r"}
+# C:/Program Files\\Pixar\\RenderManProServer-23.5\\lib\\osl\\include\\stdosl.h:88
+# float  radians (float x)  { return x*(M_PI/180.0); }
+	div		$tmp55 $const37 $const38 	%filename{"C:/Program Files\\Pixar\\RenderManProServer-23.5\\lib\\osl\\include\\stdosl.h"} %line{88} %argrw{"wrr"}
+	mul		___329_angle $tmp54 $tmp55 	%argrw{"wrr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:108
+#     float ss = mod(s * s_repeats, 1);
+	for		$tmp57 103 105 171 172 	%filename{"C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl"} %line{108} %argrw{"r"}
+	assign		___330_j $const18 	%argrw{"wr"}
+	compref		$tmp56 circlesPerRing ___328_i 	%argrw{"wrr"}
+	lt		$tmp57 ___330_j $tmp56 	%argrw{"wrr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:111
+#     // Circle properties
+	assign		$tmp59 ___330_j 	%line{111} %argrw{"wr"}
+	mul		$tmp58 $tmp59 ___329_angle 	%argrw{"wrr"}
+	functioncall	$const39 158 	%argrw{"r"}
 # C:/Program Files\\Pixar\\RenderManProServer-23.5\\lib\\osl\\include\\stdosl.h:265
-# int isnan (float x) BUILTIN;
-	sub		$tmp29 axisPoint centrePoint 	%filename{"C:/Program Files\\Pixar\\RenderManProServer-23.5\\lib\\osl\\include\\stdosl.h"} %line{265} %argrw{"wrr"}
-	normalize	___252_axis $tmp29 	%argrw{"wr"}
+# color  mix (color  x, color  y, color  a) { return x*(1-a) + y*a; }
+	sub		$tmp60 axisPoint centrePoint 	%filename{"C:/Program Files\\Pixar\\RenderManProServer-23.5\\lib\\osl\\include\\stdosl.h"} %line{265} %argrw{"wrr"}
+	normalize	___252_axis $tmp60 	%argrw{"wr"}
 # C:/Program Files\\Pixar\\RenderManProServer-23.5\\lib\\osl\\include\\stdosl.h:267
-# int isfinite (float x) BUILTIN;
-	sincos		$tmp27 ___252_sinang ___252_cosang 	%line{267} %argrw{"rww"}
+# float  mix (float  x, float  y, float  a) { return x*(1-a) + y*a; }
+	sincos		$tmp58 ___252_sinang ___252_cosang 	%line{267} %argrw{"rww"}
 # C:/Program Files\\Pixar\\RenderManProServer-23.5\\lib\\osl\\include\\stdosl.h:268
-# float erf (float x) BUILTIN;
+# #else
 	sub		___252_cosang1 $const4 ___252_cosang 	%line{268} %argrw{"wrr"}
 # C:/Program Files\\Pixar\\RenderManProServer-23.5\\lib\\osl\\include\\stdosl.h:269
-# float erfc (float x) BUILTIN;
-	compref		___252_x ___252_axis $const14 	%line{269} %argrw{"wrr"}
+# normal mix (normal x, normal y, normal a) BUILTIN;
+	compref		___252_x ___252_axis $const18 	%line{269} %argrw{"wrr"}
 	compref		___252_y ___252_axis $const3 	%argrw{"wrr"}
-	compref		___252_z ___252_axis $const8 	%argrw{"wrr"}
+	compref		___252_z ___252_axis $const12 	%argrw{"wrr"}
 # C:/Program Files\\Pixar\\RenderManProServer-23.5\\lib\\osl\\include\\stdosl.h:270
-# 
-	mul		$tmp30 ___252_x ___252_x 	%line{270} %argrw{"wrr"}
-	mul		$tmp31 ___252_x ___252_x 	%argrw{"wrr"}
-	sub		$tmp32 $const4 $tmp31 	%argrw{"wrr"}
-	mul		$tmp33 $tmp32 ___252_cosang 	%argrw{"wrr"}
-	add		$tmp34 $tmp30 $tmp33 	%argrw{"wrr"}
+# normal mix (normal x, normal y, float  a) BUILTIN;
+	mul		$tmp61 ___252_x ___252_x 	%line{270} %argrw{"wrr"}
+	mul		$tmp62 ___252_x ___252_x 	%argrw{"wrr"}
+	sub		$tmp63 $const4 $tmp62 	%argrw{"wrr"}
+	mul		$tmp64 $tmp63 ___252_cosang 	%argrw{"wrr"}
+	add		$tmp65 $tmp61 $tmp64 	%argrw{"wrr"}
 # C:/Program Files\\Pixar\\RenderManProServer-23.5\\lib\\osl\\include\\stdosl.h:271
-# // Vector functions
-	mul		$tmp35 ___252_x ___252_y 	%line{271} %argrw{"wrr"}
-	mul		$tmp36 $tmp35 ___252_cosang1 	%argrw{"wrr"}
-	mul		$tmp37 ___252_z ___252_sinang 	%argrw{"wrr"}
-	add		$tmp38 $tmp36 $tmp37 	%argrw{"wrr"}
+# vector mix (vector x, vector y, vector a) BUILTIN;
+	mul		$tmp66 ___252_x ___252_y 	%line{271} %argrw{"wrr"}
+	mul		$tmp67 $tmp66 ___252_cosang1 	%argrw{"wrr"}
+	mul		$tmp68 ___252_z ___252_sinang 	%argrw{"wrr"}
+	add		$tmp69 $tmp67 $tmp68 	%argrw{"wrr"}
 # C:/Program Files\\Pixar\\RenderManProServer-23.5\\lib\\osl\\include\\stdosl.h:272
-# 
-	mul		$tmp39 ___252_x ___252_z 	%line{272} %argrw{"wrr"}
-	mul		$tmp40 $tmp39 ___252_cosang1 	%argrw{"wrr"}
-	mul		$tmp41 ___252_y ___252_sinang 	%argrw{"wrr"}
-	sub		$tmp42 $tmp40 $tmp41 	%argrw{"wrr"}
+# vector mix (vector x, vector y, float  a) BUILTIN;
+	mul		$tmp70 ___252_x ___252_z 	%line{272} %argrw{"wrr"}
+	mul		$tmp71 $tmp70 ___252_cosang1 	%argrw{"wrr"}
+	mul		$tmp72 ___252_y ___252_sinang 	%argrw{"wrr"}
+	sub		$tmp73 $tmp71 $tmp72 	%argrw{"wrr"}
 # C:/Program Files\\Pixar\\RenderManProServer-23.5\\lib\\osl\\include\\stdosl.h:274
-# float dot (vector a, vector b) BUILTIN;
-	mul		$tmp43 ___252_x ___252_y 	%line{274} %argrw{"wrr"}
-	mul		$tmp44 $tmp43 ___252_cosang1 	%argrw{"wrr"}
-	mul		$tmp45 ___252_z ___252_sinang 	%argrw{"wrr"}
-	sub		$tmp46 $tmp44 $tmp45 	%argrw{"wrr"}
+# point  mix (point  x, point  y, float  a) BUILTIN;
+	mul		$tmp74 ___252_x ___252_y 	%line{274} %argrw{"wrr"}
+	mul		$tmp75 $tmp74 ___252_cosang1 	%argrw{"wrr"}
+	mul		$tmp76 ___252_z ___252_sinang 	%argrw{"wrr"}
+	sub		$tmp77 $tmp75 $tmp76 	%argrw{"wrr"}
 # C:/Program Files\\Pixar\\RenderManProServer-23.5\\lib\\osl\\include\\stdosl.h:275
-# float length (vector v) BUILTIN;
-	mul		$tmp47 ___252_y ___252_y 	%line{275} %argrw{"wrr"}
-	mul		$tmp48 ___252_y ___252_y 	%argrw{"wrr"}
-	sub		$tmp49 $const4 $tmp48 	%argrw{"wrr"}
-	mul		$tmp50 $tmp49 ___252_cosang 	%argrw{"wrr"}
-	add		$tmp51 $tmp47 $tmp50 	%argrw{"wrr"}
+# color  mix (color  x, color  y, color  a) BUILTIN;
+	mul		$tmp78 ___252_y ___252_y 	%line{275} %argrw{"wrr"}
+	mul		$tmp79 ___252_y ___252_y 	%argrw{"wrr"}
+	sub		$tmp80 $const4 $tmp79 	%argrw{"wrr"}
+	mul		$tmp81 $tmp80 ___252_cosang 	%argrw{"wrr"}
+	add		$tmp82 $tmp78 $tmp81 	%argrw{"wrr"}
 # C:/Program Files\\Pixar\\RenderManProServer-23.5\\lib\\osl\\include\\stdosl.h:276
-# float distance (point a, point b) BUILTIN;
-	mul		$tmp52 ___252_y ___252_z 	%line{276} %argrw{"wrr"}
-	mul		$tmp53 $tmp52 ___252_cosang1 	%argrw{"wrr"}
-	mul		$tmp54 ___252_x ___252_sinang 	%argrw{"wrr"}
-	add		$tmp55 $tmp53 $tmp54 	%argrw{"wrr"}
+# color  mix (color  x, color  y, float  a) BUILTIN;
+	mul		$tmp83 ___252_y ___252_z 	%line{276} %argrw{"wrr"}
+	mul		$tmp84 $tmp83 ___252_cosang1 	%argrw{"wrr"}
+	mul		$tmp85 ___252_x ___252_sinang 	%argrw{"wrr"}
+	add		$tmp86 $tmp84 $tmp85 	%argrw{"wrr"}
 # C:/Program Files\\Pixar\\RenderManProServer-23.5\\lib\\osl\\include\\stdosl.h:278
-# {
-	mul		$tmp56 ___252_x ___252_z 	%line{278} %argrw{"wrr"}
-	mul		$tmp57 $tmp56 ___252_cosang1 	%argrw{"wrr"}
-	mul		$tmp58 ___252_y ___252_sinang 	%argrw{"wrr"}
-	add		$tmp59 $tmp57 $tmp58 	%argrw{"wrr"}
+# #endif
+	mul		$tmp87 ___252_x ___252_z 	%line{278} %argrw{"wrr"}
+	mul		$tmp88 $tmp87 ___252_cosang1 	%argrw{"wrr"}
+	mul		$tmp89 ___252_y ___252_sinang 	%argrw{"wrr"}
+	add		$tmp90 $tmp88 $tmp89 	%argrw{"wrr"}
 # C:/Program Files\\Pixar\\RenderManProServer-23.5\\lib\\osl\\include\\stdosl.h:279
-#     vector d = b - a;
-	mul		$tmp60 ___252_y ___252_z 	%line{279} %argrw{"wrr"}
-	mul		$tmp61 $tmp60 ___252_cosang1 	%argrw{"wrr"}
-	mul		$tmp62 ___252_x ___252_sinang 	%argrw{"wrr"}
-	sub		$tmp63 $tmp61 $tmp62 	%argrw{"wrr"}
+# normal select (normal x, normal y, normal cond) BUILTIN;
+	mul		$tmp91 ___252_y ___252_z 	%line{279} %argrw{"wrr"}
+	mul		$tmp92 $tmp91 ___252_cosang1 	%argrw{"wrr"}
+	mul		$tmp93 ___252_x ___252_sinang 	%argrw{"wrr"}
+	sub		$tmp94 $tmp92 $tmp93 	%argrw{"wrr"}
 # C:/Program Files\\Pixar\\RenderManProServer-23.5\\lib\\osl\\include\\stdosl.h:280
-#     float dd = dot(d, d);
-	mul		$tmp64 ___252_z ___252_z 	%line{280} %argrw{"wrr"}
-	mul		$tmp65 ___252_z ___252_z 	%argrw{"wrr"}
-	sub		$tmp66 $const4 $tmp65 	%argrw{"wrr"}
-	mul		$tmp67 $tmp66 ___252_cosang 	%argrw{"wrr"}
-	add		$tmp68 $tmp64 $tmp67 	%argrw{"wrr"}
+# vector select (vector x, vector y, vector cond) BUILTIN;
+	mul		$tmp95 ___252_z ___252_z 	%line{280} %argrw{"wrr"}
+	mul		$tmp96 ___252_z ___252_z 	%argrw{"wrr"}
+	sub		$tmp97 $const4 $tmp96 	%argrw{"wrr"}
+	mul		$tmp98 $tmp97 ___252_cosang 	%argrw{"wrr"}
+	add		$tmp99 $tmp95 $tmp98 	%argrw{"wrr"}
 # C:/Program Files\\Pixar\\RenderManProServer-23.5\\lib\\osl\\include\\stdosl.h:282
-#         return distance(q, a);
-	matrix		___252_M $tmp34 $tmp38 $tmp42 $const20 $tmp46 $tmp51 $tmp55 $const20 $tmp59 $tmp63 $tmp68 $const20 $const20 $const20 $const20 $const4 	%line{282} %argrw{"wrrrrrrrrrrrrrrrr"}
+# color  select (color  x, color  y, color  cond) BUILTIN;
+	matrix		___252_M $tmp65 $tmp69 $tmp73 $const6 $tmp77 $tmp82 $tmp86 $const6 $tmp90 $tmp94 $tmp99 $const6 $const6 $const6 $const6 $const4 	%line{282} %argrw{"wrrrrrrrrrrrrrrrr"}
 # C:/Program Files\\Pixar\\RenderManProServer-23.5\\lib\\osl\\include\\stdosl.h:283
-#     float t = dot(q - a, d)/dd;
-	sub		$tmp70 stPoint centrePoint 	%line{283} %argrw{"wrr"}
-	transformv	$tmp69 ___252_M $tmp70 	%argrw{"wrr"}
-	add		rotPoint $tmp69 centrePoint 	%argrw{"wrr"}
-# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:84
-#             rotT = rotPoint[1];
-	compref		rotS rotPoint $const14 	%filename{"C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl"} %line{84} %argrw{"wrr"}
-# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:85
+# float  select (float  x, float  y, float  cond) BUILTIN;
+	sub		$tmp101 stPoint centrePoint 	%line{283} %argrw{"wrr"}
+	transformv	$tmp100 ___252_M $tmp101 	%argrw{"wrr"}
+	add		rotPoint $tmp100 centrePoint 	%argrw{"wrr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:112
+#                 rotT = rotPoint[1];
+	compref		rotS rotPoint $const18 	%filename{"C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl"} %line{112} %argrw{"wrr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:113
 # 
-	compref		rotT rotPoint $const3 	%line{85} %argrw{"wrr"}
-# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:88
-#             if (dist <= outerRadius && dist >= innerRadius)
-	point		$tmp71 sOffset tOffset $const20 	%line{88} %argrw{"wrrr"}
-	point		$tmp72 rotS rotT $const20 	%argrw{"wrrr"}
-	distance	___328_dist $tmp71 $tmp72 	%argrw{"wrr"}
-# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:89
+	compref		rotT rotPoint $const3 	%line{113} %argrw{"wrr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:116
+#                 if (dist <= outerRadius && dist >= innerRadius)
+	point		$tmp102 sOffset tOffset $const6 	%line{116} %argrw{"wrrr"}
+	point		$tmp103 rotS rotT $const6 	%argrw{"wrrr"}
+	distance	___331_dist $tmp102 $tmp103 	%argrw{"wrr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:117
+#                 {
+	le		$tmp104 ___331_dist outerRadius 	%line{117} %argrw{"wrr"}
+	neq		$tmp105 $tmp104 $const18 	%argrw{"wrr"}
+	if		$tmp105 169 169 	%argrw{"r"}
+	ge		$tmp106 ___331_dist innerRadius 	%argrw{"wrr"}
+	neq		$tmp107 $tmp106 $const18 	%argrw{"wrr"}
+	assign		$tmp105 $tmp107 	%argrw{"wr"}
+	if		$tmp105 171 171 	%argrw{"r"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:119
+#                 }
+	sub		dispOut dispOut ___331_dist 	%line{119} %argrw{"wrr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:108
 #             {
-	le		$tmp73 ___328_dist outerRadius 	%line{89} %argrw{"wrr"}
-	neq		$tmp74 $tmp73 $const14 	%argrw{"wrr"}
-	if		$tmp74 122 122 	%argrw{"r"}
-	ge		$tmp75 ___328_dist innerRadius 	%argrw{"wrr"}
-	neq		$tmp76 $tmp75 $const14 	%argrw{"wrr"}
-	assign		$tmp74 $tmp76 	%argrw{"wr"}
-	if		$tmp74 125 125 	%argrw{"r"}
-# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:91
-#             }
-	mul		$tmp77 ___328_dist $const27 	%line{91} %argrw{"wrr"}
-	sub		dispOut dispOut $tmp77 	%argrw{"wrr"}
-# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:81
-#             // Rotate surface
-	add		___327_j ___327_j $const3 	%line{81} %argrw{"wrr"}
-# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:94
-#     }
-	sub		sOffset sOffset distanceBetweenRows 	%line{94} %argrw{"wrr"}
-# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:78
-#     {
-	add		___325_i ___325_i $const3 	%line{78} %argrw{"wrr"}
-# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:96
-# /// PATTERN END
-	add		t_centre t_centre $const17 	%line{96} %argrw{"wrr"}
+	add		___330_j ___330_j $const3 	%line{108} %argrw{"wrr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:122
+#         }
+	sub		sOffset sOffset distanceBetweenRows 	%line{122} %argrw{"wrr"}
+# C:\\Users\\baile\\Desktop\\rman-toiletroll\\shaders/tissuePatternCircles.osl:105
+#         {
+	add		___328_i ___328_i $const3 	%line{105} %argrw{"wrr"}
 	end

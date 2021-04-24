@@ -3,19 +3,11 @@ shader tissuePatternCircles(
     float s = 0 [[int lockgeom = 0]],
     float t = 0 [[int lockgeom = 0]],
 
-    float s_repeats = 8,
-    float t_repeats = 3,
-    
-    // Circle properties
-    float innerRadius = 0.0,
-    float outerRadius = 0.010,
+    // Simplex Noise
+    float simHeight = 0.0035,
+    int simFreq = 60,
 
-    // Row properties
-    int ringsPerCircle = 3,
-    point circlesPerRing = point(18, 9, 0),    // Small = 18, 9, 0   Medium = 32, 22, 14   Large = 50, 44, 36
-    float distanceBetweenRows = outerRadius * 5,
-
-    // Noise
+    // Perlin Noise
     float height = 0.005,
     int frequency = 5,
 
@@ -23,8 +15,18 @@ shader tissuePatternCircles(
     output float dispOut = 0)
 {
     // Mirroring
+    float s_repeats = 8;
+    float t_repeats = 3;
     float ss = mod(s * s_repeats, 1);
-    float tt = mod(t * t_repeats, 1);   
+    float tt = mod(t * t_repeats, 1);
+    
+    // Circle properties
+    float innerRadius = 0.0;
+    float outerRadius = 0.010;
+
+    // Row properties
+    int rings = 3;
+    float distanceBetweenRows = outerRadius * 5;
 
     // Displace and colour blank canvas
     resultRGB = color(0.95, 0.95, 0.95);
@@ -56,42 +58,68 @@ shader tissuePatternCircles(
 // Kesson, M., 2002. OSL Rosette. [online]
 // Available from: https://www.fundza.com/rfm/osl/rosette/index.html
 // Accessed [25 March 2021]
-    // Circle centre position
+    
+    // Randomly seed number of circles per row
+    // Circles counted on physical object as reference: Small = 18, 9, 0   Medium = 32, 22, 14   Large = 50, 44, 36
+    float circleSeed = (float)noise("cell", s_repeats * s, t_repeats * t);
+
+    if (circleSeed < 0.5)
+    {
+         circleSeed += 0.5;
+    }
+
+    float a = circleSeed * 50;
+    float b = circleSeed * 44;
+    float c = circleSeed * 36;
+    point circlesPerRing = point((int)a, (int)b, (int)c);
+
     float s_centre = 0.5;
     float t_centre = 0.5;
-
-    float circleSize = (25 * outerRadius);
+    float radiusOffset = (float)noise("cell", s_repeats * s, t_repeats * t) * 0.2;
+    float circleSize = (15 * outerRadius) + radiusOffset;
     point stPoint = point(ss, tt, 0);
     point rotPoint;
     float rotS;
     float rotT;
 
+    // Offset centre position of pattern
+    float offsetSeed = (float)noise("cell", s_repeats * s, t_repeats * t) - 0.5;
+
     // Centre point of circle (to rotate around)
-    point centrePoint = point(s_centre, t_centre, 0);
+    point centrePoint = point(s_centre - (offsetSeed * 0.1), t_centre - (offsetSeed * 0.1), 0);
     point axisPoint = point(s_centre, t_centre, 1);
 
     // Draw position
     float sOffset = s_centre - circleSize;
     float tOffset = t_centre;
 
-    for (int i = 0; i < ringsPerCircle; ++i)
+    // Simplex noise
+    if (distance(centrePoint, point(ss, tt, 0)) > (circleSize + ((rings - 1) * distanceBetweenRows)))
     {
-        float angle = radians(360 / circlesPerRing[i]);
-        for (int j = 0; j < circlesPerRing[i]; ++j) {
-            // Rotate surface
-            rotPoint = rotate(stPoint, j * angle, centrePoint, axisPoint);
-            rotS = rotPoint[0];
-            rotT = rotPoint[1];
-
-            // Draw circle
-            float dist = distance(point(sOffset, tOffset, 0), point(rotS, rotT, 0));
-            if (dist <= outerRadius && dist >= innerRadius)
-            {
-                dispOut -= dist * 2;
-            }
-        }
-        sOffset -= distanceBetweenRows;
+        dispOut -= simHeight * (float)noise("usimplex", P * simFreq);
     }
-    t_centre += 0.5;
+/// PATTERN START
+    else
+    {
+        for (int i = 0; i < rings; ++i)
+        {
+            float angle = radians(360 / circlesPerRing[i]);
+            for (int j = 0; j < circlesPerRing[i]; ++j)
+            {
+                // Rotate surface
+                rotPoint = rotate(stPoint, j * angle, centrePoint, axisPoint);
+                rotS = rotPoint[0];
+                rotT = rotPoint[1];
+
+                // Draw circle
+                float dist = distance(point(sOffset, tOffset, 0), point(rotS, rotT, 0));
+                if (dist <= outerRadius && dist >= innerRadius)
+                {
+                    dispOut -= dist;
+                }
+            }
+            sOffset -= distanceBetweenRows;
+        }
+    }
 /// PATTERN END
 }
