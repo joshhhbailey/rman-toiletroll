@@ -3,10 +3,6 @@ shader tissuePatternCircles(
     float s = 0 [[int lockgeom = 0]],
     float t = 0 [[int lockgeom = 0]],
 
-    // Simplex Noise
-    float simHeight = 0.0035,
-    int simFreq = 60,
-
     // Perlin Noise
     float height = 0.005,
     int frequency = 5,
@@ -59,66 +55,60 @@ shader tissuePatternCircles(
 // Available from: https://www.fundza.com/rfm/osl/rosette/index.html
 // Accessed [25 March 2021]
     
-    // Randomly seed number of circles per row
     // Circles counted on physical object as reference: Small = 18, 9, 0   Medium = 32, 22, 14   Large = 50, 44, 36
-    float circleSeed = (float)noise("cell", s_repeats * s, t_repeats * t);
+    point circlesPerRing = point(36, 44, 50);
 
-    if (circleSeed < 0.5)
-    {
-         circleSeed += 0.5;
-    }
-
-    float a = circleSeed * 50;
-    float b = circleSeed * 44;
-    float c = circleSeed * 36;
-    point circlesPerRing = point((int)a, (int)b, (int)c);
-
-    float s_centre = 0.5;
-    float t_centre = 0.5;
-    float radiusOffset = (float)noise("cell", s_repeats * s, t_repeats * t) * 0.2;
-    float circleSize = (15 * outerRadius) + radiusOffset;
+    float s_centre = 1.0;
+    float t_centre = 0.0;
+    float circleSize = 0.2;
     point stPoint = point(ss, tt, 0);
     point rotPoint;
     float rotS;
     float rotT;
+    float ringsPerCircle = 3;
 
-    // Offset centre position of pattern
-    float offsetSeed = (float)noise("cell", s_repeats * s, t_repeats * t) - 0.5;
-
-    // Centre point of circle (to rotate around)
-    point centrePoint = point(s_centre - (offsetSeed * 0.1), t_centre - (offsetSeed * 0.1), 0);
-    point axisPoint = point(s_centre, t_centre, 1);
-
-    // Draw position
-    float sOffset = s_centre - circleSize;
-    float tOffset = t_centre;
-
-    // Simplex noise
-    if (distance(centrePoint, point(ss, tt, 0)) > (circleSize + ((rings - 1) * distanceBetweenRows)))
-    {
-        dispOut -= simHeight * (float)noise("usimplex", P * simFreq);
-    }
 /// PATTERN START
-    else
+    for (int rows = 0; rows < 3; ++rows)
     {
-        for (int i = 0; i < rings; ++i)
+        for (int circlesPerRow = 0; circlesPerRow < 2; circlesPerRow++)
         {
-            float angle = radians(360 / circlesPerRing[i]);
-            for (int j = 0; j < circlesPerRing[i]; ++j)
-            {
-                // Rotate surface
-                rotPoint = rotate(stPoint, j * angle, centrePoint, axisPoint);
-                rotS = rotPoint[0];
-                rotT = rotPoint[1];
+            // Centre point of circle (to rotate around)
+            point centrePoint = point(s_centre, t_centre, 0);
+            point axisPoint = point(s_centre, t_centre, 1);
 
-                // Draw circle
-                float dist = distance(point(sOffset, tOffset, 0), point(rotS, rotT, 0));
-                if (dist <= outerRadius && dist >= innerRadius)
-                {
-                    dispOut -= dist;
+            // Draw position
+            float sOffset = s_centre - circleSize;
+            float tOffset = t_centre;
+
+            for (int i = 0; i < ringsPerCircle; ++i)
+            {
+                float angle = radians(360 / circlesPerRing[i]);
+                for (int j = 0; j < circlesPerRing[i]; ++j) {
+                    // Rotate surface
+                    rotPoint = rotate(stPoint, j * angle, centrePoint, axisPoint);
+                    rotS = rotPoint[0];
+                    rotT = rotPoint[1];
+
+                    // Draw circle
+                    float dist = distance(point(sOffset, tOffset, 0), point(rotS, rotT, 0));
+                    if (dist <= outerRadius && dist >= innerRadius)
+                    {
+                        dispOut -= dist * 0.75;
+                    }
                 }
+                sOffset -= distanceBetweenRows;
             }
-            sOffset -= distanceBetweenRows;
+            t_centre += 1.0;
+        }
+        if (rows == 1)
+        {
+            t_centre = 0.5;
+            s_centre = 0.5;
+        }
+        else
+        {
+            t_centre = 0.0;
+            s_centre -= 1.0;
         }
     }
 /// PATTERN END
