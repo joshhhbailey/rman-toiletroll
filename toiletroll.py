@@ -48,8 +48,8 @@ def CreateRoll(_height = 1.0, _outerRadius = 1.0, _innerRadius = 0.5, _pattern =
     ri.AttributeBegin()
     ri.Attribute("displacementbound", 
     {
-        "sphere" : [1],
-        "coordinatesystem" : ["shader"]
+        "sphere" : [0.1],
+        "coordinatesystem" : ["object"]
     })
     noiseHeight = random.uniform(0.7, 0.8)
     noiseFreq = random.randint(70, 80)
@@ -78,8 +78,8 @@ def CreateRoll(_height = 1.0, _outerRadius = 1.0, _innerRadius = 0.5, _pattern =
     ri.AttributeBegin()
     ri.Attribute("displacementbound", 
     {
-        "sphere" : [1],
-        "coordinatesystem" : ["shader"]
+        "sphere" : [0.1],
+        "coordinatesystem" : ["object"]
     })
     noiseHeight = random.uniform(0.003, 0.007)
     noiseFreq = random.randint(5, 8)
@@ -110,8 +110,8 @@ def CreateRoll(_height = 1.0, _outerRadius = 1.0, _innerRadius = 0.5, _pattern =
     ri.AttributeBegin()
     ri.Attribute("displacementbound", 
     {
-        "sphere" : [1],
-        "coordinatesystem" : ["shader"]
+        "sphere" : [0.1],
+        "coordinatesystem" : ["object"]
     })
     noiseHeight = random.uniform(0.003, 0.005)
     noiseFreq = random.randint(195, 205)
@@ -177,6 +177,10 @@ def CompileShader(_shader):
 	    except subprocess.CalledProcessError:
 		    sys.exit("shader compilation failed")
 
+# The following function is adapted from:
+# RenderMan., 2021. RenderMan Documentation 20: Denoising. [online]
+# Available from: https://renderman.pixar.com/resources/RenderMan_20/risDenoise.html
+# Accessed [27 April 2021]
 def SetupDisplay():
     # Beauty...
     ri.DisplayChannel("color Ci")
@@ -200,9 +204,9 @@ def SetupDisplay():
 
     # Geometry...
     ri.DisplayChannel("float z",
-        {"string source" : "float z" ,"string filter": "gaussian"})
+        {"string source" : "float z", "string filter" : "gaussian"})
     ri.DisplayChannel("float z_var",
-        {"string source" : "float z" ,"string filter" : "gaussian" ,"string statistics": "variance"})
+        {"string source" : "float z", "string filter" : "gaussian", "string statistics" : "variance"})
     ri.DisplayChannel("normal normal",
         {"string source" : "normal Nn"})
     ri.DisplayChannel("normal normal_var",
@@ -213,7 +217,11 @@ def SetupDisplay():
         {"string source" : "vector motionBack"})
 
     # framebuffer or openexr
-    ri.Display("toiletroll.exr", "framebuffer", "Ci,a,mse,albedo,albedo_var,diffuse,diffuse_mse,specular,specular_mse,z,z_var,normal,normal_var,forward,backward", { "int asrgba" : [1]})
+    ri.Display("toiletroll.exr", "framebuffer", "Ci,a,mse,albedo,albedo_var,diffuse,diffuse_mse,specular,specular_mse,z,z_var,normal,normal_var,forward,backward", {"int asrgba" : [1]})
+
+    ri.Format(1920, 1080, 1)                              # Width, Height, Aspect Ratio
+    ri.Hider("raytrace", {"int incremental" : [1], "string pixelfiltermode" : "importance"})
+    ri.Integrator("PxrPathTracer", "integrator")
 
 if __name__ == "__main__":
     CompileShader("shaders/tissuePatternCircles")
@@ -223,13 +231,8 @@ if __name__ == "__main__":
     CompileShader("shaders/table")
 
     ri = prman.Ri()     # Create RenderMan interface instance
-
     ri.Begin("__render")    # Begin .rib and pass to renderer
-    SetupDisplay()  # Denoising
-    ri.Format(1920, 1080, 1)                              # Width, Height, Aspect Ratio
-
-    ri.Hider("raytrace", {"int incremental" :[1], "string pixelfiltermode" : "importance"})
-    ri.Integrator("PxrPathTracer", "integrator")
+    SetupDisplay()
 
     # Camera coordinate system
     ri.Projection(ri.PERSPECTIVE)
