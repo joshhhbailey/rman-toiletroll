@@ -27,6 +27,7 @@ shader tissuePatternCircles(
     // Displace and colour blank canvas
     resultRGB = color(0.95, 0.95, 0.95);
     dispOut = height * (float)noise("perlin", P * frequency);
+    dispOut += 0.003 * (float)noise("perlin", P * 150);
 
 /// STIPPLING START
     float stipRepeats = 2;

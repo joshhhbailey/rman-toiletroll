@@ -1,0 +1,29 @@
+shader testShader(
+    // Can be interpolated from an 's' or 't' variable attached to the geometry
+    float s = 0 [[int lockgeom = 0]],
+    float t = 0 [[int lockgeom = 0]],
+
+    // Noise
+    float height = 0.75,
+    int frequency = 75,
+
+    output color resultRGB = 0,
+    output float dispOut = 0)
+{
+    // Colours
+    color low = color(0.45, 0.4, 0.33);
+    color high = color(1.0, 0.87, 0.7);
+    
+    float noiseOut = height * (float)noise("uperlin", P * frequency);
+    
+    resultRGB = low * high * (abs(noiseOut) + 0.5);
+
+    // Draw line
+    float line = abs(s - t);
+    float thickness = 0.001;
+
+    if (line < thickness)
+    {
+        resultRGB = color(0.0, 0.0, 0.0);
+    }
+}
